@@ -1,0 +1,42 @@
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+body {
+  color: var(--foreground);
+  background: var(--background);
+  /* font-family: Arial, Helvetica, sans-serif; */
+}
+
+/* Custom toast styles */
+.toast-success {
+  background: #f0fdf4 !important; /* Light green background */
+  color: #166534 !important; /* Dark green text */
+  border-right: 6px solid #22c55e !important; /* Green border */
+}
+
+.toast-error {
+  background: #fef2f2 !important; /* Light red background */
+  color: #991b1b !important; /* Dark red text */
+  border-right: 6px solid #ef4444 !important; /* Red border */
+}
+
+.toast-warning {
+  background: #fffbeb !important; /* Light yellow background */
+  color: #92400e !important; /* Dark yellow text */
+  border-right: 6px solid #f59e0b !important; /* Yellow border */
+}
+
+.toast-info {
+  background: #f0f9ff !important; /* Light blue background */
+  color: #075985 !important; /* Dark blue text */
+  border-right: 6px solid #0ea5e9 !important; /* Blue border */
+}
