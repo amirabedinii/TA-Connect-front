@@ -1,7 +1,14 @@
-import { useMutation } from '@tanstack/react-query';
-import { SignUpCredentials, LoginCredentials, AuthResponse, AuthError } from '../types/auth.types';
-import { clientFetch } from '@/lib/api/clientApi';
-import { useRouter } from 'next/navigation';
+import { useMutation } from "@tanstack/react-query";
+import {
+  SignUpCredentials,
+  LoginCredentials,
+  AuthResponse,
+  AuthError,
+  LoginResponse,
+} from "../types/auth.types";
+import { clientFetch } from "@/lib/api/clientApi";
+import { useRouter } from "next/navigation";
+import { showToast } from "@/lib/utils/utils";
 
 export const useAuth = () => {
   const router = useRouter();
@@ -9,25 +16,27 @@ export const useAuth = () => {
   const useSignUp = () => {
     return useMutation<AuthResponse, AuthError, SignUpCredentials>({
       mutationFn: async (credentials) => {
-        return clientFetch.post<AuthResponse>('/auth/signup', credentials);
+        return clientFetch.post<AuthResponse>("/auth/users", credentials);
       },
       onSuccess: (data) => {
-        localStorage.setItem('token', data.token);
-        document.cookie = `token=${data.token}; path=/`;
-        router.push('/dashboard');
+        router.push("/login");
+        showToast.success("برای ادامه دادن وارد حساب کاربری خود شوید");
       },
     });
   };
 
   const useLogin = () => {
-    return useMutation<AuthResponse, AuthError, LoginCredentials>({
+    return useMutation<LoginResponse, AuthError, LoginCredentials>({
       mutationFn: async (credentials) => {
-        return clientFetch.post<AuthResponse>('/auth/login', credentials);
+        return clientFetch.post<LoginResponse>("/auth/jwt/create", credentials);
       },
       onSuccess: (data) => {
-        localStorage.setItem('token', data.token);
-        document.cookie = `token=${data.token}; path=/`;
-        router.push('/dashboard');
+        // TODO: store tokens in cookies and local storage
+        //   localStorage.setItem('access', data.access);
+        //   localStorage.setItem('refresh', data.refresh);
+        localStorage.setItem("isLogin", "true");
+        router.push("/");
+        showToast.success("به پنل کاربری خود خوش آمدید");
       },
     });
   };
@@ -35,12 +44,12 @@ export const useAuth = () => {
   const useLogout = () => {
     return useMutation<void, AuthError, void>({
       mutationFn: async () => {
-        await clientFetch.post('/auth/logout');
-        localStorage.removeItem('token');
-        document.cookie = 'token=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT';
+        await clientFetch.post("/auth/logout");
+        localStorage.removeItem("access");
+        localStorage.removeItem("refresh");
       },
       onSuccess: () => {
-        router.push('/login');
+        router.push("/login");
       },
     });
   };
@@ -50,4 +59,4 @@ export const useAuth = () => {
     useLogin,
     useLogout,
   };
-}; 
+};

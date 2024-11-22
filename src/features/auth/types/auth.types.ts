@@ -3,24 +3,27 @@ export interface SignUpCredentials {
   lastName: string;
   email: string;
   password: string;
+  username: string;
 }
 
 export interface LoginCredentials {
-  email: string;
+  username: string;
   password: string;
 }
 
 export interface AuthResponse {
-  token: string;
-  user: {
-    id: string;
-    email: string;
-    firstName: string;
-    lastName: string;
-  }
+  id: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+}
+
+export interface LoginResponse {
+  refresh: string;
+  access: string;
 }
 
 export interface AuthError {
   message: string;
   status: number;
-} 
+}

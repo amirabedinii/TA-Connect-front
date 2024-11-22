@@ -19,7 +19,7 @@ import { showToast } from "@/lib/utils/utils";
 
 const loginSchema = z.object({
   root: z.string().optional(),
-  email: z.string().email("ایمیل نامعتبر است"),
+  username: z.string().min(1, "نام کاربری الزامی است"),
   password: z.string().min(6, "رمز عبور باید حداقل ۶ کاراکتر باشد"),
 });
 
@@ -41,20 +41,17 @@ export default function LoginPage() {
 
   const onSubmit = async (data: LoginFormData) => {
     try {
-      showToast.success('با موفقیت وارد شدید');
-      // mutate(data, {
-      //   onSuccess: () => {
-      //     router.push("/dashboard");
-      //   }, 
-      //   onError: () => {
-      //     setError("root", {
-      //       message: "ایمیل یا رمز عبور اشتباه است",
-      //     });
-      //   }
-      // });
+      
+      mutate(data, {
+        onError: () => {
+          setError("root", {
+            message: "نام کاربری یا رمز عبور اشتباه است",
+          });
+        }
+      });
     } catch (err) {
       setError("root", {
-        message: "ایمیل یا رمز عبور اشتباه است",
+        message: "نام کاربری یا رمز عبور اشتباه است",
       });
     }
   };
@@ -103,9 +100,9 @@ export default function LoginPage() {
             autoFocus
             InputProps={{ sx: { borderRadius: 2 } }}
             dir="rtl"
-            error={!!errors.email}
-            helperText={errors.email?.message}
-            {...register("email")}
+            error={!!errors.username}
+            helperText={errors.username?.message}
+            {...register("username")}
           />
           <TextField
             margin="normal"

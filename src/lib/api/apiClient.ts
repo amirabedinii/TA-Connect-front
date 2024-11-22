@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const BASE_URL = process.env.BASE_URL || 'http://localhost:3000/api';
+const BASE_URL = process.env.BASE_URL || 'http://127.0.0.1:8000';
 
 export const createApiClient = (token?: string) => {
   const client = axios.create({
