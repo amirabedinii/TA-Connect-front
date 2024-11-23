@@ -14,6 +14,7 @@ const signupSchema = z.object({
   lastName: z.string().min(2, 'نام خانوادگی باید حداقل ۲ کاراکتر باشد'),
   email: z.string().email('ایمیل نامعتبر است'),
   password: z.string().min(6, 'رمز عبور باید حداقل ۶ کاراکتر باشد'),
+  username: z.string().min(1, 'نام کاربری الزامی است'),
 });
 
 type SignUpFormData = z.infer<typeof signupSchema>;
@@ -34,17 +35,16 @@ export default function SignUpPage() {
 
   const onSubmit = async (data: SignUpFormData) => {
     try {
-      showToast.success('ثبت‌نام با موفقیت انجام شد');
-      // mutate(data, {
-      //   onSuccess: () => {
-      //     router.push('/dashboard');
-      //   },
-      //   onError: (error) => {
-      //     setError('root', {
-      //       message: error.message || 'خطا در ثبت‌نام',
-      //     });
-      //   },
-      // });
+      mutate(data, {
+        onSuccess: () => {
+          router.push('/login');
+        },
+        onError: (error) => {
+          setError('root', {
+            message: error.message || 'خطا در ثبت‌نام',
+          });
+        },
+      });
     } catch (err) {
       showToast.error('خطا در ثبت‌نام');
     }
@@ -131,6 +131,18 @@ export default function SignUpPage() {
               error={!!errors.password}
               helperText={errors.password?.message}
               {...register('password')}
+            />
+            <TextField
+              required
+              fullWidth
+              id="username"
+              label="نام کاربری"
+              autoComplete="username"
+              InputProps={{ sx: { borderRadius: 2 } }}
+              dir="rtl"
+              error={!!errors.username}
+              helperText={errors.username?.message}
+              {...register('username')}
             />
           </Stack>
           <Button
