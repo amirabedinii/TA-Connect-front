@@ -16,11 +16,14 @@ export const useAuth = () => {
   const useSignUp = () => {
     return useMutation<AuthResponse, AuthError, SignUpCredentials>({
       mutationFn: async (credentials) => {
-        return clientFetch.post<AuthResponse>("/auth/users", credentials);
+        return clientFetch.post<AuthResponse>("/auth/users/", credentials);
       },
       onSuccess: (data) => {
         router.push("/login");
         showToast.success("برای ادامه دادن وارد حساب کاربری خود شوید");
+      },
+      onError: (error) => {
+        showToast.error(error.message);
       },
     });
   };

@@ -94,9 +94,9 @@ export default function LoginPage() {
             margin="normal"
             required
             fullWidth
-            id="email"
-            label="ایمیل"
-            autoComplete="email"
+            id="username"
+            label="نام کاربری"
+            autoComplete="username"
             autoFocus
             InputProps={{ sx: { borderRadius: 2 } }}
             dir="rtl"

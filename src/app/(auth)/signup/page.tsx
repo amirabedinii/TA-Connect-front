@@ -35,10 +35,9 @@ export default function SignUpPage() {
 
   const onSubmit = async (data: SignUpFormData) => {
     try {
-      showToast.success('ثبت‌نام با موفقیت انجام شد');
       mutate(data, {
         onSuccess: () => {
-          router.push('/dashboard');
+          router.push('/login');
         },
         onError: (error) => {
           setError('root', {
