@@ -1,6 +1,7 @@
 import axios from 'axios';
+import { showToast } from '../utils/utils';
 
-const BASE_URL = process.env.BASE_URL || 'http://127.0.0.1:8000';
+export const BASE_URL = process.env.BASE_URL || 'http://127.0.0.1:8000';
 
 export const createApiClient = (token?: string) => {
   const client = axios.create({
@@ -17,6 +18,10 @@ export const createApiClient = (token?: string) => {
     async (error) => {
       // Handle specific error cases
       if (error.response?.status === 401) {
+        localStorage.removeItem('access');
+        localStorage.removeItem('refresh');
+        localStorage.removeItem('isLogin');
+        showToast.error('لطفا مجددا وارد حساب کاربری خود شوید');
         // Handle unauthorized on client side only
         if (typeof window !== 'undefined') {
           window.location.href = '/login';

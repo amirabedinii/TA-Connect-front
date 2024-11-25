@@ -7,7 +7,7 @@ export async function getServerSideAPI() {
   return createApiClient(token);
 }
 
-export async function serverFetch<T>(endpoint: string, options?: RequestInit): Promise<T> {
+export async function serverFetch<T>(endpoint: string, options?: RequestInit , params?: any): Promise<T> {
   const api = await getServerSideAPI();
   const response = await api.get<T>(endpoint);
   return response.data;

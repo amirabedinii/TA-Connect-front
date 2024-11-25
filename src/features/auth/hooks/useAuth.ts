@@ -9,18 +9,32 @@ import {
 import { clientFetch } from "@/lib/api/clientApi";
 import { useRouter } from "next/navigation";
 import { showToast } from "@/lib/utils/utils";
+import { BASE_URL } from "@/lib/api/apiClient";
 
 export const useAuth = () => {
   const router = useRouter();
 
+  const fetchSignUp = async (credentials: SignUpCredentials) => {
+    const response = await fetch(`${BASE_URL}/auth/users/`, {
+      method: "POST",
+      headers: {
+        "Cache-Control": "no-cache, no-store, must-revalidate",
+        Pragma: "no-cache",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(credentials),
+    });
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.detail || 'Authentication failed');
+    }
+    return response.json();
+  };
+
   const useSignUp = () => {
     return useMutation<AuthResponse, AuthError, SignUpCredentials>({
       mutationFn: async (credentials) => {
-        return clientFetch.post<AuthResponse>("/auth/users/", credentials);
-      },
-      onSuccess: (data) => {
-        router.push("/login");
-        showToast.success("برای ادامه دادن وارد حساب کاربری خود شوید");
+        return fetchSignUp(credentials);
       },
       onError: (error) => {
         showToast.error(error.message);
@@ -28,18 +42,33 @@ export const useAuth = () => {
     });
   };
 
+  const fetchLogin = async (credentials: LoginCredentials) => {
+    // dont use clientFetch here because it will be used in the interceptor
+    const response = await fetch(`${BASE_URL}/auth/jwt/create`, {
+      method: "POST",
+      headers: {
+        "Cache-Control": "no-cache, no-store, must-revalidate",
+        Pragma: "no-cache",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(credentials),
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.detail || 'Authentication failed');
+    }
+    return response.json();
+  };
   const useLogin = () => {
     return useMutation<LoginResponse, AuthError, LoginCredentials>({
       mutationFn: async (credentials) => {
-        return clientFetch.post<LoginResponse>("/auth/jwt/create", credentials);
-      },
-      onSuccess: (data) => {
-        // TODO: store tokens in cookies and local storage
-        //   localStorage.setItem('access', data.access);
-        //   localStorage.setItem('refresh', data.refresh);
-        localStorage.setItem("isLogin", "true");
-        router.push("/");
-        showToast.success("به پنل کاربری خود خوش آمدید");
+        const response = await fetchLogin(credentials);
+        document.cookie = `access=${response.access}; path=/`;
+        document.cookie = `refresh=${response.refresh}; path=/`;
+        localStorage.setItem('access', response.access);
+        localStorage.setItem('refresh', response.refresh);
+        return response;
       },
     });
   };
@@ -48,8 +77,11 @@ export const useAuth = () => {
     return useMutation<void, AuthError, void>({
       mutationFn: async () => {
         await clientFetch.post("/auth/logout");
+        document.cookie = "access=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT";
+        document.cookie = "refresh=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT";
         localStorage.removeItem("access");
         localStorage.removeItem("refresh");
+        localStorage.removeItem("isLogin");
       },
       onSuccess: () => {
         router.push("/login");
