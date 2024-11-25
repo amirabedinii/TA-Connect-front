@@ -18,8 +18,6 @@ export const useAuth = () => {
     const response = await fetch(`${BASE_URL}/auth/users/`, {
       method: "POST",
       headers: {
-        "Cache-Control": "no-cache, no-store, must-revalidate",
-        Pragma: "no-cache",
         "Content-Type": "application/json",
       },
       body: JSON.stringify(credentials),
@@ -47,8 +45,6 @@ export const useAuth = () => {
     const response = await fetch(`${BASE_URL}/auth/jwt/create`, {
       method: "POST",
       headers: {
-        "Cache-Control": "no-cache, no-store, must-revalidate",
-        Pragma: "no-cache",
         "Content-Type": "application/json",
       },
       body: JSON.stringify(credentials),
