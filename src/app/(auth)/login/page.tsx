@@ -27,7 +27,7 @@ type LoginFormData = z.infer<typeof loginSchema>;
 
 export default function LoginPage() {
   const { useLogin } = useAuth();
-  const { mutate, isPending } = useLogin();
+  const { mutate  } = useLogin();
   const router = useRouter();
 
   const {
@@ -43,7 +43,16 @@ export default function LoginPage() {
     try {
       
       mutate(data, {
+        onSuccess: (data) => {
+          // TODO: store tokens in cookies and local storage
+          localStorage.setItem('access', data.access);
+          localStorage.setItem('refresh', data.refresh);
+          localStorage.setItem("isLogin", "true");
+          router.push("/");
+          showToast.success("به پنل کاربری خود خوش آمدید");
+        },
         onError: () => {
+          
           setError("root", {
             message: "نام کاربری یا رمز عبور اشتباه است",
           });
@@ -51,7 +60,7 @@ export default function LoginPage() {
       });
     } catch (err) {
       setError("root", {
-        message: "نام کاربری یا رمز عبور اشتباه است",
+        message: "نام کاربری یا رمز عبور اشتباه است" + err,
       });
     }
   };
