@@ -1,14 +1,17 @@
 import { createApiClient } from './apiClient';
 
 export function getClientSideAPI() {
-  let token: string | undefined;
+  let accessToken: string | undefined;
+  let refreshToken: string | undefined;
   
   // Only access localStorage on client side
   if (typeof window !== 'undefined') {
-    token = localStorage.getItem('token') || undefined;
+    accessToken = localStorage.getItem('access') || undefined;
   }
-  
-  return createApiClient(token);
+  if (typeof window !== 'undefined') {
+    refreshToken = localStorage.getItem('refresh') || undefined;
+  }
+  return createApiClient(accessToken, refreshToken);
 }
 
 export const clientFetch = {

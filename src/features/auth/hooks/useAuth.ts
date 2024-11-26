@@ -60,6 +60,7 @@ export const useAuth = () => {
     return useMutation<LoginResponse, AuthError, LoginCredentials>({
       mutationFn: async (credentials) => {
         const response = await fetchLogin(credentials);
+        console.log("Login response:", response);
         document.cookie = `access=${response.access}; path=/`;
         document.cookie = `refresh=${response.refresh}; path=/`;
         localStorage.setItem('access', response.access);

@@ -27,7 +27,7 @@ type LoginFormData = z.infer<typeof loginSchema>;
 
 export default function LoginPage() {
   const { useLogin } = useAuth();
-  const { mutate, isPending } = useLogin();
+  const { mutate  } = useLogin();
   const router = useRouter();
 
   const {
@@ -60,7 +60,7 @@ export default function LoginPage() {
       });
     } catch (err) {
       setError("root", {
-        message: "نام کاربری یا رمز عبور اشتباه است",
+        message: "نام کاربری یا رمز عبور اشتباه است" + err,
       });
     }
   };
