@@ -7,9 +7,11 @@ export function getClientSideAPI() {
   // Only access localStorage on client side
   if (typeof window !== 'undefined') {
     accessToken = localStorage.getItem('access') || undefined;
+    console.log(accessToken, "accessToken");
   }
   if (typeof window !== 'undefined') {
     refreshToken = localStorage.getItem('refresh') || undefined;
+    console.log(refreshToken, "refreshToken");
   }
   return createApiClient(accessToken, refreshToken);
 }

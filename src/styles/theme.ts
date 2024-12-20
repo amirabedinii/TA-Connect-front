@@ -3,6 +3,7 @@ import { createTheme } from "@mui/material/styles";
 import rtlPlugin from 'stylis-plugin-rtl';
 import { prefixer } from 'stylis';
 import createCache from '@emotion/cache';
+import { darkColors } from './colors';
 
 // Create rtl cache
 export const cacheRtl = createCache({
@@ -12,38 +13,17 @@ export const cacheRtl = createCache({
 
 const theme = createTheme({
   direction: 'rtl',
-  // palette: {
-  //   primary: {
-  //     main: '#2e7d32', // Dark green
-  //     light: '#4caf50', // Medium green
-  //     dark: '#1b5e20', // Darker green
-  //   },
-  //   secondary: {
-  //     main: '#66bb6a', // Light green
-  //     light: '#81c784',
-  //     dark: '#388e3c',
-  //   },
-  //   error: {
-  //     main: '#d32f2f',
-  //   },
-  //   warning: {
-  //     main: '#ed6c02',
-  //   },
-  //   info: {
-  //     main: '#0288d1',
-  //   },
-  //   success: {
-  //     main: '#2e7d32',
-  //   },
-  //   background: {
-  //     default: '#ffffff',
-  //     paper: '#f5f5f5',
-  //   },
-  //   text: {
-  //     primary: '#1a1a1a',
-  //     secondary: '#666666',
-  //   },
-  // },
+  palette: {
+    mode: 'dark',
+    primary: darkColors.primary,
+    secondary: darkColors.secondary,
+    error: darkColors.error,
+    warning: darkColors.warning,
+    info: darkColors.info,
+    success: darkColors.success,
+    background: darkColors.background,
+    text: darkColors.text,
+  },
   typography: {
     fontFamily: 'Vazirmatn, Arial, sans-serif',
   },
@@ -52,6 +32,31 @@ const theme = createTheme({
       styleOverrides: {
         root: {
           borderRadius: 8,
+        },
+      },
+    },
+    MuiPaper: {
+      styleOverrides: {
+        root: {
+          backgroundColor: darkColors.background.paper,
+        },
+      },
+    },
+    MuiTextField: {
+      styleOverrides: {
+        root: {
+          '& .MuiOutlinedInput-root': {
+            backgroundColor: 'rgba(255, 255, 255, 0.09)',
+            '& fieldset': {
+              borderColor: 'rgba(255, 255, 255, 0.23)',
+            },
+            '&:hover fieldset': {
+              borderColor: 'rgba(255, 255, 255, 0.4)',
+            },
+            '&:hover': {
+              backgroundColor: 'rgba(255, 255, 255, 0.13)',
+            },
+          },
         },
       },
     },

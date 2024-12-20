@@ -27,7 +27,7 @@ type LoginFormData = z.infer<typeof loginSchema>;
 
 export default function LoginPage() {
   const { useLogin } = useAuth();
-  const { mutate  } = useLogin();
+  const { mutate } = useLogin();
   const router = useRouter();
 
   const {
@@ -41,22 +41,20 @@ export default function LoginPage() {
 
   const onSubmit = async (data: LoginFormData) => {
     try {
-      
       mutate(data, {
         onSuccess: (data) => {
           // TODO: store tokens in cookies and local storage
-          localStorage.setItem('access', data.access);
-          localStorage.setItem('refresh', data.refresh);
+          localStorage.setItem("access", data.access);
+          localStorage.setItem("refresh", data.refresh);
           localStorage.setItem("isLogin", "true");
           router.push("/");
           showToast.success("به پنل کاربری خود خوش آمدید");
         },
         onError: () => {
-          
           setError("root", {
             message: "نام کاربری یا رمز عبور اشتباه است",
           });
-        }
+        },
       });
     } catch (err) {
       setError("root", {
@@ -76,7 +74,7 @@ export default function LoginPage() {
           flexDirection: "column",
           alignItems: "center",
           borderRadius: 2,
-          background: "rgba(255, 255, 255, 0.9)",
+          background: (theme) => theme.palette.background.paper,
         }}
       >
         <Typography
@@ -139,6 +137,13 @@ export default function LoginPage() {
               py: 1.5,
               fontSize: "1.1rem",
               fontWeight: "bold",
+              backgroundColor: (theme) => theme.palette.primary.main,
+              "&:hover": {
+                backgroundColor: (theme) => theme.palette.primary.dark,
+              },
+              "&:disabled": {
+                backgroundColor: (theme) => theme.palette.action.disabled,
+              },
             }}
           >
             {isSubmitting ? "در حال ورود..." : "ورود"}
@@ -150,7 +155,11 @@ export default function LoginPage() {
               variant="body1"
               sx={{
                 textDecoration: "none",
-                "&:hover": { textDecoration: "underline" },
+                color: (theme) => theme.palette.primary.main,
+                "&:hover": {
+                  textDecoration: "underline",
+                  color: (theme) => theme.palette.primary.light,
+                },
               }}
             >
               حساب کاربری ندارید؟ ثبت‌نام کنید

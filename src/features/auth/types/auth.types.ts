@@ -1,9 +1,10 @@
 export interface SignUpCredentials {
-  firstName: string;
-  lastName: string;
-  email: string;
-  password: string;
+  first_name: string;
+  last_name: string;
   username: string;
+  student_number: string;
+  password: string;
+  password_confirmation: string;
 }
 
 export interface LoginCredentials {

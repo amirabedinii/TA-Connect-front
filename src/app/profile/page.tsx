@@ -1,4 +1,4 @@
- "use client";
+"use client";
 
 import {
   Box,
@@ -8,6 +8,7 @@ import {
   Button,
   Typography,
   Stack,
+  CircularProgress,
 } from "@mui/material";
 import { useUser } from "@/features/user/hooks/useUser";
 import { useForm } from "react-hook-form";
@@ -20,13 +21,15 @@ const profileSchema = z.object({
   last_name: z.string().min(2, "نام خانوادگی باید حداقل ۲ کاراکتر باشد"),
   email: z.string().email("ایمیل نامعتبر است"),
   username: z.string().min(1, "نام کاربری الزامی است"),
+  bio: z.string().optional(),
+  contact_info: z.string().optional(),
 });
 
 type ProfileFormData = z.infer<typeof profileSchema>;
 
 export default function ProfilePage() {
   const { useGetUserInfo, useUpdateUserInfo } = useUser();
-  const { data: user, isLoading } = useGetUserInfo;
+  const { data: user, isLoading } = useGetUserInfo();
   const { mutate: updateProfile, isPending: isUpdating } = useUpdateUserInfo;
 
   const {
@@ -45,6 +48,8 @@ export default function ProfilePage() {
         last_name: user.last_name,
         email: user.email,
         username: user.username,
+        bio: user.bio,
+        contact_info: user.contact_info,
       });
     }
   }, [user, reset]);
@@ -55,8 +60,8 @@ export default function ProfilePage() {
 
   if (isLoading) {
     return (
-      <Container maxWidth="sm">
-        <Typography>در حال بارگیری...</Typography>
+      <Container maxWidth="sm" sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+        <CircularProgress />
       </Container>
     );
   }
@@ -72,7 +77,7 @@ export default function ProfilePage() {
           flexDirection: "column",
           alignItems: "center",
           borderRadius: 2,
-          background: "rgba(255, 255, 255, 0.9)",
+          background: (theme) => theme.palette.background.paper,
         }}
       >
         <Typography component="h1" variant="h4" sx={{ mb: 3, fontWeight: "bold" }}>
@@ -138,6 +143,32 @@ export default function ProfilePage() {
               helperText={errors.username?.message}
               {...register("username")}
             />
+
+            <TextField
+              fullWidth
+              id="bio"
+              label="بیوگرافی"
+              multiline
+              rows={4}
+              InputProps={{ sx: { borderRadius: 2 } }}
+              dir="rtl"
+              error={!!errors.bio}
+              helperText={errors.bio?.message}
+              {...register("bio")}
+            />
+
+            <TextField
+              fullWidth
+              id="contact_info"
+              label="اطلاعات تماس"
+              multiline
+              rows={2}
+              InputProps={{ sx: { borderRadius: 2 } }}
+              dir="rtl"
+              error={!!errors.contact_info}
+              helperText={errors.contact_info?.message}
+              {...register("contact_info")}
+            />
           </Stack>
 
           <Button
@@ -152,6 +183,13 @@ export default function ProfilePage() {
               py: 1.5,
               fontSize: "1.1rem",
               fontWeight: "bold",
+              backgroundColor: (theme) => theme.palette.primary.main,
+              "&:hover": {
+                backgroundColor: (theme) => theme.palette.primary.dark,
+              },
+              "&:disabled": {
+                backgroundColor: (theme) => theme.palette.action.disabled,
+              },
             }}
           >
             {isUpdating ? "در حال بروزرسانی..." : "بروزرسانی پروفایل"}

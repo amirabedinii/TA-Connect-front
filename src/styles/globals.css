@@ -1,42 +1,39 @@
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --background-primary: #121212;
+  --background-secondary: #1e1e1e;
+  --background-paper: rgba(30, 30, 30, 0.95);
+  
+  --text-primary: #ffffff;
+  --text-secondary: rgba(255, 255, 255, 0.7);
+  --text-disabled: rgba(255, 255, 255, 0.5);
 }
 
 body {
-  color: var(--foreground);
-  background: var(--background);
-  /* font-family: Arial, Helvetica, sans-serif; */
+  color: var(--text-primary);
+  background: var(--background-primary);
 }
 
-/* Custom toast styles */
+/* Custom toast styles using our color system */
 .toast-success {
-  background: #f0fdf4 !important; /* Light green background */
-  color: #166534 !important; /* Dark green text */
-  border-right: 6px solid #22c55e !important; /* Green border */
+  background: var(--success-background) !important;
+  color: var(--success-main) !important;
+  border-right: 6px solid var(--success-light) !important;
 }
 
 .toast-error {
-  background: #fef2f2 !important; /* Light red background */
-  color: #991b1b !important; /* Dark red text */
-  border-right: 6px solid #ef4444 !important; /* Red border */
+  background: var(--error-background) !important;
+  color: var(--error-main) !important;
+  border-right: 6px solid var(--error-light) !important;
 }
 
 .toast-warning {
-  background: #fffbeb !important; /* Light yellow background */
-  color: #92400e !important; /* Dark yellow text */
-  border-right: 6px solid #f59e0b !important; /* Yellow border */
+  background: var(--warning-background) !important;
+  color: var(--warning-main) !important;
+  border-right: 6px solid var(--warning-light) !important;
 }
 
 .toast-info {
-  background: #f0f9ff !important; /* Light blue background */
-  color: #075985 !important; /* Dark blue text */
-  border-right: 6px solid #0ea5e9 !important; /* Blue border */
+  background: var(--info-background) !important;
+  color: var(--info-main) !important;
+  border-right: 6px solid var(--info-light) !important;
 }

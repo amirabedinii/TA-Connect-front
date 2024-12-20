@@ -6,7 +6,7 @@ import { User, UserError } from '../types/user.types';
 export const useUser = () => {
   const queryClient = useQueryClient();
 
-  const useGetUserInfo = useQuery<User, UserError>({
+  const useGetUserInfo = () => useQuery<User, UserError>({
     queryKey: ['profile'],
     queryFn: () => clientFetch.get('/auth/users/me/'),
   });
