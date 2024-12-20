@@ -1,8 +1,11 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
+const studentRoutes = ['/requests', '/available-courses'];
+const teacherRoutes = ['/my-courses'];
+
 export function middleware(request: NextRequest) {
-  const isAuthenticated = request.cookies.get('access') 
+  const isAuthenticated = request.cookies.get('access')
   const isAuthPage = request.nextUrl.pathname.startsWith('/login') || 
                     request.nextUrl.pathname.startsWith('/signup')
 
@@ -11,6 +14,17 @@ export function middleware(request: NextRequest) {
   }
 
   if (isAuthenticated && isAuthPage) {
+    return NextResponse.redirect(new URL('/', request.url))
+  }
+
+  // Role-based route protection
+  const userRole = request.cookies.get('user_role')?.value
+
+  if (userRole === 'student' && teacherRoutes.some(route => request.nextUrl.pathname.startsWith(route))) {
+    return NextResponse.redirect(new URL('/', request.url))
+  }
+
+  if (userRole === 'teacher' && studentRoutes.some(route => request.nextUrl.pathname.startsWith(route))) {
     return NextResponse.redirect(new URL('/', request.url))
   }
 

@@ -17,20 +17,44 @@ import {
 import MenuIcon from "@mui/icons-material/Menu";
 import PersonIcon from "@mui/icons-material/Person";
 import LogoutIcon from "@mui/icons-material/Logout";
-import { useState } from "react";
+import SchoolIcon from "@mui/icons-material/School";
+import ListAltIcon from "@mui/icons-material/ListAlt";
+import { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/features/auth/hooks/useAuth";
-
-const menuItems = [
-  { name: "پروفایل کاربری", path: "/profile", icon: <PersonIcon /> },
-  { name: "خروج", path: "logout", icon: <LogoutIcon /> },
-];
+import { useUser } from "@/features/user/hooks/useUser";
 
 export default function MenuBar() {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const router = useRouter();
   const { useLogout } = useAuth();
   const { mutate: logout } = useLogout();
+  const { useGetUserInfo } = useUser();
+  const { data: user, isLoading } = useGetUserInfo();
+
+  const menuItems = useMemo(() => {
+    if (!user) return [];
+    
+    const commonItems = [
+      { name: "پروفایل کاربری", path: "/profile", icon: <PersonIcon /> },
+    ];
+
+    const roleBasedItems = {
+      student: [
+        { name: "درخواست‌های من", path: "/requests", icon: <ListAltIcon /> },
+        { name: "دروس قابل درخواست", path: "/available-courses", icon: <SchoolIcon /> },
+      ],
+      teacher: [
+        { name: "دروس من", path: "/my-courses", icon: <SchoolIcon /> },
+      ],
+    };
+
+    return [
+      ...commonItems,
+      ...(roleBasedItems[user.role as keyof typeof roleBasedItems] || []),
+      { name: "خروج", path: "logout", icon: <LogoutIcon /> },
+    ];
+  }, [user]);
 
   const handleDrawerToggle = () => {
     setIsDrawerOpen(!isDrawerOpen);

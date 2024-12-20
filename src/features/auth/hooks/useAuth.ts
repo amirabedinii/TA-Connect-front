@@ -10,6 +10,7 @@ import { clientFetch } from "@/lib/api/clientApi";
 import { useRouter } from "next/navigation";
 import { showToast } from "@/lib/utils/utils";
 import { BASE_URL } from "@/lib/api/apiClient";
+import { User } from "@/features/user/types/user.types";
 
 export const useAuth = () => {
   const router = useRouter();
@@ -60,11 +61,15 @@ export const useAuth = () => {
     return useMutation<LoginResponse, AuthError, LoginCredentials>({
       mutationFn: async (credentials) => {
         const response = await fetchLogin(credentials);
-        console.log("Login response:", response);
         document.cookie = `access=${response.access}; path=/`;
         document.cookie = `refresh=${response.refresh}; path=/`;
         localStorage.setItem('access', response.access);
         localStorage.setItem('refresh', response.refresh);
+        
+        // Fetch user info after successful login
+        const userInfo = await clientFetch.get<User>('/auth/users/me/');
+        document.cookie = `user_role=${userInfo.role}; path=/`;
+        
         return response;
       },
     });
@@ -73,9 +78,9 @@ export const useAuth = () => {
   const useLogout = () => {
     return useMutation<void, AuthError, void>({
       mutationFn: async () => {
-        //await clientFetch.post("/auth/logout");
         document.cookie = "access=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT";
         document.cookie = "refresh=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT";
+        document.cookie = "user_role=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT";
         localStorage.removeItem("access");
         localStorage.removeItem("refresh");
         localStorage.removeItem("isLogin");
