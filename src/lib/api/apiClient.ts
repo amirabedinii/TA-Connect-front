@@ -1,10 +1,9 @@
 import axios from "axios";
 import { showToast } from "../utils/utils";
-import { cookies } from "next/headers";
 
 export const BASE_URL = process.env.BASE_URL || "http://127.0.0.1:8000";
 
-export const createApiClient = (access?: string , refresh?: string) => {
+export const createApiClient = (access?: string ) => {
   const client = axios.create({
     baseURL: BASE_URL,
     headers: {

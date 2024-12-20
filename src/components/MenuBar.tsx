@@ -30,7 +30,7 @@ export default function MenuBar() {
   const { useLogout } = useAuth();
   const { mutate: logout } = useLogout();
   const { useGetUserInfo } = useUser();
-  const { data: user, isLoading } = useGetUserInfo();
+  const { data: user } = useGetUserInfo();
 
   const menuItems = useMemo(() => {
     if (!user) return [];

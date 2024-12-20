@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { clientFetch } from "@/lib/api/clientApi";
 import { showToast } from "@/lib/utils/utils";
-import { Course, CourseRequest, CourseResponse } from "../types/course.types";
+import {  CourseRequest, CourseResponse } from "../types/course.types";
 
 export const useCourse = () => {
   const queryClient = useQueryClient();

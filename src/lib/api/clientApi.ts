@@ -2,18 +2,14 @@ import { createApiClient } from './apiClient';
 
 export function getClientSideAPI() {
   let accessToken: string | undefined;
-  let refreshToken: string | undefined;
-  
+    
   // Only access localStorage on client side
   if (typeof window !== 'undefined') {
     accessToken = localStorage.getItem('access') || undefined;
     console.log(accessToken, "accessToken");
   }
-  if (typeof window !== 'undefined') {
-    refreshToken = localStorage.getItem('refresh') || undefined;
-    console.log(refreshToken, "refreshToken");
-  }
-  return createApiClient(accessToken, refreshToken);
+
+  return createApiClient(accessToken);
 }
 
 export const clientFetch = {
@@ -23,13 +19,13 @@ export const clientFetch = {
     return response.data;
   },
   
-  post: async <T>(endpoint: string, data?: any): Promise<T> => {
+  post: async <T, D = unknown>(endpoint: string, data?: D): Promise<T> => {
     const api = getClientSideAPI();
     const response = await api.post<T>(endpoint, data);
     return response.data;
   },
   
-  put: async <T>(endpoint: string, data?: any): Promise<T> => {
+  put: async <T, D = unknown>(endpoint: string, data?: D): Promise<T> => {
     const api = getClientSideAPI();
     const response = await api.put<T>(endpoint, data);
     return response.data;

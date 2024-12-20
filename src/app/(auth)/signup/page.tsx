@@ -34,7 +34,7 @@ type SignUpFormData = z.infer<typeof signupSchema>;
 
 export default function SignUpPage() {
   const { useSignUp } = useAuth();
-  const { mutate, isPending } = useSignUp();
+  const { mutate } = useSignUp();
   const router = useRouter();
 
   const {
@@ -49,7 +49,7 @@ export default function SignUpPage() {
   const onSubmit = async (data: SignUpFormData) => {
     try {
       mutate(data, {
-        onSuccess: (data) => {
+        onSuccess: () => {
           router.push("/login");
           showToast.success("برای ادامه دادن وارد حساب کاربری خود شوید");
         },
@@ -60,7 +60,7 @@ export default function SignUpPage() {
         },
       });
     } catch (err) {
-      showToast.error("خطا در ثبت‌نام");
+      showToast.error("خطا در ثبت‌نام" + err?.toString());
     }
   };
 
