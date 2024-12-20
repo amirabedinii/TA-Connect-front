@@ -5,7 +5,7 @@ import React from "react";
 import Providers from "../providers/providers";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import MenuBar from "@/components/MenuBar";
+import MenuBarWrapper from "@/components/MenuBarWrapper";
 
 // const roboto = Roboto({
 //   weight: ['300', '400', '500', '700'],
@@ -34,7 +34,7 @@ export default function RootLayout({
     <html lang="ar" dir="rtl">
       <body className={`${vazirmatn.className} antialiased`}>
         <Providers>
-          <MenuBar />
+          <MenuBarWrapper />
           {children}
         </Providers>
         <ToastContainer />

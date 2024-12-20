@@ -24,7 +24,9 @@ export const createApiClient = (access?: string , refresh?: string) => {
         localStorage.removeItem("refresh");
         document.cookie = "access=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT";
         document.cookie = "refresh=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT";
-        window.location.href = "/login";
+        document.cookie = "isLogin=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT";
+        document.cookie = "user_role=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT";
+        //window.location.href = "/login";
         showToast.error("لطفا مجددا وارد حساب کاربری خود شوید");
         // try {
 
