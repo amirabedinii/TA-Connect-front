@@ -1,15 +1,13 @@
 export interface User {
-    id: number;
-    username: string;
-    email: string;
-    first_name: string;
-    last_name: string;
-    bio?: string;
-    contact_info?: string;
-    profile_image?: string;
-  }
+  username: string;
+  first_name: string;
+  last_name: string;
+  role: 'student' | 'teacher' | 'admin';
+  student_number: string;
+  biography: string;
+}
 
-  export interface UserError {
-    message: string;
-    status: number;
-  }
+export interface UserError {
+  message: string;
+  status: number;
+}

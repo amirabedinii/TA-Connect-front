@@ -7,15 +7,12 @@ import {
   IconButton,
   Typography,
   Container,
-  Avatar,
-  Tooltip,
   Drawer,
   List,
   ListItem,
   ListItemIcon,
   ListItemText,
   ListItemButton,
-  Divider,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import PersonIcon from "@mui/icons-material/Person";
@@ -49,8 +46,15 @@ export default function MenuBar() {
   };
 
   return (
-    <>
-      <AppBar position="static">
+    <Box sx={{ display: 'flex', direction: 'rtl' }}>
+      <AppBar 
+        position="fixed" 
+        sx={{ 
+          top: 0,
+          left: 0,
+          right: 0
+        }}
+      >
         <Container maxWidth="xl">
           <Toolbar disableGutters>
             <IconButton
@@ -72,23 +76,26 @@ export default function MenuBar() {
             >
               TA Connect
             </Typography>
-            <Tooltip title="پروفایل">
-              <IconButton sx={{ p: 0 }}>
-                <Avatar />
-              </IconButton>
-            </Tooltip>
           </Toolbar>
         </Container>
       </AppBar>
-
+      <Toolbar />
       <Drawer
+        variant="temporary"
         anchor="right"
         open={isDrawerOpen}
         onClose={handleDrawerToggle}
+        ModalProps={{
+          keepMounted: true, // Better mobile performance
+        }}
         sx={{
+          display: { xs: 'block' },
           '& .MuiDrawer-paper': {
             width: 240,
             boxSizing: 'border-box',
+            direction: 'rtl',
+            right: 0,
+            left: 'auto',
           },
         }}
       >
@@ -97,14 +104,24 @@ export default function MenuBar() {
             {menuItems.map((item) => (
               <ListItem key={item.name} disablePadding>
                 <ListItemButton onClick={() => handleMenuClick(item.path)}>
-                  <ListItemIcon>{item.icon}</ListItemIcon>
-                  <ListItemText primary={item.name} />
+                  <ListItemIcon sx={{ minWidth: 40, mr: 'auto', ml: -1 }}>
+                    {item.icon}
+                  </ListItemIcon>
+                  <ListItemText 
+                    primary={item.name} 
+                    sx={{ 
+                      textAlign: 'right',
+                      '& .MuiTypography-root': {
+                        fontFamily: 'Vazirmatn, Arial, sans-serif',
+                      }
+                    }} 
+                  />
                 </ListItemButton>
               </ListItem>
             ))}
           </List>
         </Box>
       </Drawer>
-    </>
+    </Box>
   );
 } 

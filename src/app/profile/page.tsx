@@ -19,10 +19,9 @@ import { useEffect } from "react";
 const profileSchema = z.object({
   first_name: z.string().min(2, "نام باید حداقل ۲ کاراکتر باشد"),
   last_name: z.string().min(2, "نام خانوادگی باید حداقل ۲ کاراکتر باشد"),
-  email: z.string().email("ایمیل نامعتبر است"),
   username: z.string().min(1, "نام کاربری الزامی است"),
-  bio: z.string().optional(),
-  contact_info: z.string().optional(),
+  student_number: z.string().min(1, "شماره دانشجویی الزامی است"),
+  biography: z.string().optional(),
 });
 
 type ProfileFormData = z.infer<typeof profileSchema>;
@@ -46,10 +45,9 @@ export default function ProfilePage() {
       reset({
         first_name: user.first_name,
         last_name: user.last_name,
-        email: user.email,
         username: user.username,
-        bio: user.bio,
-        contact_info: user.contact_info,
+        student_number: user.student_number,
+        biography: user.biography,
       });
     }
   }, [user, reset]);
@@ -121,19 +119,6 @@ export default function ProfilePage() {
             <TextField
               required
               fullWidth
-              id="email"
-              label="ایمیل"
-              autoComplete="email"
-              InputProps={{ sx: { borderRadius: 2 } }}
-              dir="rtl"
-              error={!!errors.email}
-              helperText={errors.email?.message}
-              {...register("email")}
-            />
-
-            <TextField
-              required
-              fullWidth
               id="username"
               label="نام کاربری"
               autoComplete="username"
@@ -145,29 +130,28 @@ export default function ProfilePage() {
             />
 
             <TextField
+              required
               fullWidth
-              id="bio"
+              id="student_number"
+              label="شماره دانشجویی"
+              InputProps={{ sx: { borderRadius: 2 } }}
+              dir="rtl"
+              error={!!errors.student_number}
+              helperText={errors.student_number?.message}
+              {...register("student_number")}
+            />
+
+            <TextField
+              fullWidth
+              id="biography"
               label="بیوگرافی"
               multiline
               rows={4}
               InputProps={{ sx: { borderRadius: 2 } }}
               dir="rtl"
-              error={!!errors.bio}
-              helperText={errors.bio?.message}
-              {...register("bio")}
-            />
-
-            <TextField
-              fullWidth
-              id="contact_info"
-              label="اطلاعات تماس"
-              multiline
-              rows={2}
-              InputProps={{ sx: { borderRadius: 2 } }}
-              dir="rtl"
-              error={!!errors.contact_info}
-              helperText={errors.contact_info?.message}
-              {...register("contact_info")}
+              error={!!errors.biography}
+              helperText={errors.biography?.message}
+              {...register("biography")}
             />
           </Stack>
 

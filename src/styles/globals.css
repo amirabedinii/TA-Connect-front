@@ -1,3 +1,9 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
 :root {
   --background-primary: #121212;
   --background-secondary: #1e1e1e;
@@ -9,8 +15,11 @@
 }
 
 body {
+  margin: 0;
+  padding: 0;
   color: var(--text-primary);
   background: var(--background-primary);
+  min-height: 100vh;
 }
 
 /* Custom toast styles using our color system */
