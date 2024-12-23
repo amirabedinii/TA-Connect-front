@@ -9,13 +9,13 @@ export function middleware(request: NextRequest) {
   const isAuthPage = request.nextUrl.pathname.startsWith('/login') || 
                     request.nextUrl.pathname.startsWith('/signup')
 
-  if (!isAuthenticated && !isAuthPage) {
-    return NextResponse.redirect(new URL('/login', request.url))
-  }
+  // if (!isAuthenticated && !isAuthPage) {
+  //   return NextResponse.redirect(new URL('/login', request.url))
+  // }
 
-  if (isAuthenticated && isAuthPage) {
-    return NextResponse.redirect(new URL('/', request.url))
-  }
+  // if (isAuthenticated && isAuthPage) {
+  //   return NextResponse.redirect(new URL('/', request.url))
+  // }
 
   // Role-based route protection
   const userRole = request.cookies.get('user_role')?.value

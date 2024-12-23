@@ -29,8 +29,16 @@ export default function MenuBar() {
   const router = useRouter();
   const { useLogout } = useAuth();
   const { mutate: logout } = useLogout();
-  const { useGetUserInfo } = useUser();
-  const { data: user } = useGetUserInfo();
+  //const { useGetUserInfo } = useUser();
+  //const { data: user } = useGetUserInfo();
+  const user = {
+    id: 1,
+    first_name: "محمد",
+    last_name: "علی",
+    email: "ali@gmail.com",
+    phone_number: "09123456789",
+    role: "student",
+  };
 
   const menuItems = useMemo(() => {
     if (!user) return [];
