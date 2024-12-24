@@ -47,3 +47,9 @@ export interface TAResponse {
 export interface InstructorResponse {
   instructor: Instructor;
 } 
+
+export interface InstructorCoursesResponse {
+  courses: Course[];
+  totalItems?: number;
+  totalPages?: number; 
+}

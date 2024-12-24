@@ -23,14 +23,16 @@ import {
   Science,
   ContactPhone,
 } from "@mui/icons-material";
+import InstructorCoursesTable from "@/features/course/components/InstructorCoursesTable";
 
 export default function InstructorDetailsPage() {
   const params = useParams();
   const instructorId = params.id as string;
-  const { useGetInstructorDetails } = useCourse();
+  const { useGetInstructorDetails, useGetInstructorCourses } = useCourse();
   const { data, isLoading } = useGetInstructorDetails(instructorId);
+  const { data: coursesData, isLoading: isLoadingCourses } = useGetInstructorCourses(instructorId);
 
-  if (isLoading) {
+  if (isLoading || isLoadingCourses) {
     return (
       <Container sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
         <CircularProgress />
@@ -105,7 +107,7 @@ export default function InstructorDetailsPage() {
                   }
                 />
               </ListItem>
-              <Divider variant="inset" component="li" />
+              <Divider variant="inset" component="li" />  
               <ListItem>
                 <ListItemIcon>
                   <Science />
@@ -113,23 +115,32 @@ export default function InstructorDetailsPage() {
                 <ListItemText
                   primary="زمینه‌های تحقیقاتی"
                   secondary={
-                    <Box
-                      component="span"
-                      sx={{ display: "flex", gap: 1, flexWrap: "wrap", mt: 1 }}
-                    >
-                      {instructor?.research_fields?.map((field) => (
-                        <Chip
-                          key={field}
-                          label={field}
-                          size="small"
-                          color="primary"
-                        />
-                      ))}
-                    </Box>
+                    <Typography component="div" variant="body2">
+                      <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap", mt: 1 }}>
+                        {instructor?.research_fields?.map((field) => (
+                          <Chip
+                            key={field}
+                            label={field}
+                            size="small"
+                            color="primary"
+                          />
+                        ))}
+                      </Box>
+                    </Typography>
                   }
                 />
               </ListItem>
             </List>
+          </Grid>
+
+          {/* Courses Section */}
+          <Grid item xs={12}>
+            <Typography variant="h6" gutterBottom fontWeight="bold" color="primary">
+              دروس استاد
+            </Typography>
+            {coursesData?.courses && (
+              <InstructorCoursesTable courses={coursesData.courses} />
+            )}
           </Grid>
         </Grid>
       </Paper>

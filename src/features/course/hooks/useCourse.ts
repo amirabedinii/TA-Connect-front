@@ -9,6 +9,7 @@ import {
   TAResponse,
   TA,
   InstructorResponse,
+  InstructorCoursesResponse,
 } from "../types/course.types";
 
 export const useCourse = () => {
@@ -115,8 +116,8 @@ export const useCourse = () => {
   const allCourses = Array.from({ length: 20 }, (_, i) => ({
     id: (i + 1).toString(),
     name: courseNames[i],
-    semester: semesters[Math.floor(Math.random() * semesters.length)],
-    instructor: instructors[Math.floor(Math.random() * instructors.length)],
+    semester: semesters[i % semesters.length],
+    instructor: instructors[i % instructors.length],
   }));
 
   const useGetAvailableCourses = (page: number = 1, pageSize: number = 10) =>
@@ -205,7 +206,7 @@ export const useCourse = () => {
         if (!instructor) {
           throw new Error("Instructor not found");
         }
-        
+
         // Mock additional data
         const enrichedInstructor = {
           ...instructor,
@@ -213,8 +214,27 @@ export const useCourse = () => {
           way_of_communication: ["Email", "Office Hours"],
           research_fields: ["Machine Learning", "Artificial Intelligence"],
         };
-        
+
         return Promise.resolve({ instructor: enrichedInstructor });
+      },
+    });
+
+  const useGetInstructorCourses = (instructorId: string) =>
+    useQuery<InstructorCoursesResponse>({
+      queryKey: ["instructor-courses", instructorId],
+      queryFn: () => {
+        // Filter courses by instructor ID
+
+        const instructorCourses = allCourses.filter(
+          (course) => course.instructor.id === instructorId
+        );
+
+        console.log(instructorCourses, "instructorCourses");
+
+        return Promise.resolve({
+          courses: instructorCourses,
+          totalItems: instructorCourses.length,
+        });
       },
     });
 
@@ -224,5 +244,6 @@ export const useCourse = () => {
     useGetCourseDetails,
     useGetCourseTAs,
     useGetInstructorDetails,
+    useGetInstructorCourses,
   };
 };
