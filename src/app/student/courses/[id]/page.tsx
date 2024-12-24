@@ -13,6 +13,7 @@ import {
   Button,
   useTheme,
   useMediaQuery,
+  Link,
 } from "@mui/material";
 import { useCourse } from "@/features/course/hooks/useCourse";
 import { useParams, useRouter } from "next/navigation";
@@ -42,6 +43,10 @@ export default function CourseDetailsPage() {
 
   if (!course) return null;
 
+  const handleInstructorClick = () => {
+    router.push(`/student/instructors/${course.instructor.id}`);
+  };
+
   return (
     <Container component="main" maxWidth="lg">
       <Paper
@@ -63,7 +68,7 @@ export default function CourseDetailsPage() {
               <Button
                 variant="contained"
                 color="primary"
-                onClick={() => router.push(`/available-courses`)}
+                onClick={() => router.push(`/student/available-courses`)}
                 sx={{ 
                   borderRadius: 2,
                   minWidth: 150,
@@ -85,7 +90,20 @@ export default function CourseDetailsPage() {
                 <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                   <PersonOutline color="action" />
                   <Typography>
-                    استاد: {course.instructor.first_name} {course.instructor.last_name}
+                    استاد:{" "}
+                    <Link
+                      component="span"
+                      onClick={handleInstructorClick}
+                      sx={{
+                        cursor: "pointer",
+                        color: "primary.main",
+                        "&:hover": {
+                          textDecoration: "underline",
+                        },
+                      }}
+                    >
+                      {course.instructor.first_name} {course.instructor.last_name}
+                    </Link>
                   </Typography>
                 </Box>
                 <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>

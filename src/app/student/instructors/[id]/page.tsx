@@ -56,7 +56,12 @@ export default function InstructorDetailsPage() {
         <Grid container spacing={4}>
           {/* Header */}
           <Grid item xs={12}>
-            <Typography variant="h4" component="h1" fontWeight="bold" gutterBottom>
+            <Typography
+              variant="h4"
+              component="h1"
+              fontWeight="bold"
+              gutterBottom
+            >
               {instructor.first_name} {instructor.last_name}
             </Typography>
           </Grid>
@@ -68,21 +73,18 @@ export default function InstructorDetailsPage() {
                 <ListItemIcon>
                   <Badge />
                 </ListItemIcon>
-                <ListItemText 
+                <ListItemText
                   primary="کد پرسنلی"
                   secondary={instructor.staff_id}
                 />
               </ListItem>
               <Divider variant="inset" component="li" />
-              
+
               <ListItem>
                 <ListItemIcon>
                   <Email />
                 </ListItemIcon>
-                <ListItemText 
-                  primary="ایمیل"
-                  secondary={instructor.email}
-                />
+                <ListItemText primary="ایمیل" secondary={instructor.email} />
               </ListItem>
               <Divider variant="inset" component="li" />
 
@@ -90,10 +92,12 @@ export default function InstructorDetailsPage() {
                 <ListItemIcon>
                   <ContactPhone />
                 </ListItemIcon>
-                <ListItemText 
+                <ListItemText
                   primary="روش‌های ارتباطی"
                   secondary={
-                    <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap', mt: 1 }}>
+                    <Box
+                      sx={{ display: "flex", gap: 1, flexWrap: "wrap", mt: 1 }}
+                    >
                       {instructor?.way_of_communication?.map((way) => (
                         <Chip key={way} label={way} size="small" />
                       ))}
@@ -102,17 +106,24 @@ export default function InstructorDetailsPage() {
                 />
               </ListItem>
               <Divider variant="inset" component="li" />
-
               <ListItem>
                 <ListItemIcon>
                   <Science />
                 </ListItemIcon>
-                <ListItemText 
+                <ListItemText
                   primary="زمینه‌های تحقیقاتی"
                   secondary={
-                    <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap', mt: 1 }}>
+                    <Box
+                      component="span"
+                      sx={{ display: "flex", gap: 1, flexWrap: "wrap", mt: 1 }}
+                    >
                       {instructor?.research_fields?.map((field) => (
-                        <Chip key={field} label={field} size="small" color="primary" />
+                        <Chip
+                          key={field}
+                          label={field}
+                          size="small"
+                          color="primary"
+                        />
                       ))}
                     </Box>
                   }
@@ -124,4 +135,4 @@ export default function InstructorDetailsPage() {
       </Paper>
     </Container>
   );
-} 
+}

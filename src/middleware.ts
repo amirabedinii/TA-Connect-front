@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
-const studentRoutes = ['/requests', '/available-courses'];
+const studentRoutes = ['/student/requests', '/student/available-courses'];
 const teacherRoutes = ['/my-courses'];
 
 export function middleware(request: NextRequest) {

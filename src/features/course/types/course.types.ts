@@ -26,8 +26,8 @@ export interface CourseDetailsResponse {
 }
 
 export interface CourseRequest {
-  courseRef: string;
-  studentRef: string;
+  course_ref: string;
+  student_ref: string;
   condition: string;
 }
 

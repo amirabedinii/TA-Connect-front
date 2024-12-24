@@ -51,7 +51,7 @@ export default function CourseTable({
   };
 
   const handleRowClick = (courseId: string) => {
-    router.push(`/courses/${courseId}`);
+    router.push(`courses/${courseId}`);
   };
 
   if (isMobile) {
