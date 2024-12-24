@@ -16,6 +16,7 @@ import {
   TablePagination,
 } from "@mui/material";
 import { Course } from "../types/course.types";
+import { useRouter } from "next/navigation";
 
 interface CourseTableProps {
   courses: Course[];
@@ -38,6 +39,7 @@ export default function CourseTable({
 }: CourseTableProps) {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const router = useRouter();
 
   const handleChangePage = (event: unknown, newPage: number) => {
     onPageChange(newPage + 1);
@@ -48,28 +50,42 @@ export default function CourseTable({
     onPageChange(1);
   };
 
+  const handleRowClick = (courseId: string) => {
+    router.push(`/courses/${courseId}`);
+  };
+
   if (isMobile) {
     return (
       <Stack spacing={2}>
         {courses.map((course) => (
-          <Card key={course.id} sx={{ width: "100%" }}>
+          <Card 
+            key={course.id} 
+            sx={{ 
+              width: "100%",
+              cursor: "pointer",
+              '&:hover': {
+                backgroundColor: 'action.hover',
+              }
+            }}
+            onClick={() => handleRowClick(course.id)}
+          >
             <CardContent>
               <Typography variant="h6" gutterBottom>
                 {course.name}
               </Typography>
               <Typography color="text.secondary" gutterBottom>
-                استاد: {course.teacherName}
+                استاد: {course?.instructor?.first_name} {course?.instructor?.last_name}
               </Typography>
               <Typography color="text.secondary" gutterBottom>
                 نیمسال: {course.semester}
               </Typography>
-              {/* <Typography color="text.secondary" gutterBottom>
-                شرایط: {course.condition}
-              </Typography> */}
               <Button
                 variant="contained"
                 color="primary"
-                onClick={() => onRequestClick(course)}
+                onClick={(e) => {
+                  e.stopPropagation(); // Prevent row click when clicking the button
+                  onRequestClick(course);
+                }}
                 sx={{ mt: 1 }}
                 fullWidth
               >
@@ -104,22 +120,32 @@ export default function CourseTable({
               <TableCell>نام درس</TableCell>
               <TableCell>استاد</TableCell>
               <TableCell>نیمسال</TableCell>
-              {/* <TableCell>شرایط</TableCell> */}
               <TableCell>عملیات</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {courses.map((course) => (
-              <TableRow key={course.id}>
+              <TableRow 
+                key={course.id}
+                onClick={() => handleRowClick(course.id)}
+                sx={{ 
+                  cursor: 'pointer',
+                  '&:hover': {
+                    backgroundColor: 'action.hover',
+                  }
+                }}
+              >
                 <TableCell>{course.name}</TableCell>
-                <TableCell>{course.teacherName}</TableCell>
+                <TableCell>{course.instructor.first_name} {course.instructor.last_name}</TableCell>
                 <TableCell>{course.semester}</TableCell>
-                {/* <TableCell>{course.condition}</TableCell> */}
                 <TableCell>
                   <Button
                     variant="contained"
                     color="primary"
-                    onClick={() => onRequestClick(course)}
+                    onClick={(e) => {
+                      e.stopPropagation(); // Prevent row click when clicking the button
+                      onRequestClick(course);
+                    }}
                   >
                     درخواست
                   </Button>

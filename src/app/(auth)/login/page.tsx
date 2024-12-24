@@ -101,6 +101,7 @@ export default function LoginPage() {
             margin="normal"
             required
             fullWidth
+            variant="outlined"
             id="username"
             label="نام کاربری"
             autoComplete="username"
@@ -115,6 +116,7 @@ export default function LoginPage() {
             margin="normal"
             required
             fullWidth
+            variant="outlined"
             label="رمز عبور"
             type="password"
             id="password"
