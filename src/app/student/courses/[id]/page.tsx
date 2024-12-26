@@ -27,9 +27,9 @@ export default function CourseDetailsPage() {
   // const theme = useTheme();
   // const isMobile = useMediaQuery(theme.breakpoints.down("md"));
   const courseId = params.id as string;
-  const { useGetCourseDetails, useGetCourseTAs } = useCourse();
+  const { useGetCourseDetails } = useCourse();
   const { data: courseData, isLoading: isLoadingCourse } = useGetCourseDetails(courseId);
-  const { data: taData, isLoading: isLoadingTAs } = useGetCourseTAs(courseId);
+
 
   if (isLoadingCourse) {
     return (
@@ -39,7 +39,7 @@ export default function CourseDetailsPage() {
     );
   }
 
-  const course = courseData?.course;
+  const course = courseData;
 
   if (!course) return null;
 
@@ -118,10 +118,10 @@ export default function CourseDetailsPage() {
             <Typography variant="h6" gutterBottom fontWeight="bold" color="primary">
               دستیاران آموزشی
             </Typography>
-            {isLoadingTAs ? (
+            {isLoadingCourse ? (
               <CircularProgress />
             ) : (
-              <TATable tas={taData?.tas || []} />
+              <TATable tas={course.acceptedStudents|| []} />
             )}
           </Grid>
         </Grid>

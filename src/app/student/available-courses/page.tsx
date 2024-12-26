@@ -30,7 +30,10 @@ export default function AvailableCoursesPage() {
   const handleConfirmRequest = () => {
     if (selectedCourse) {
       requestCourse(
-        { courseId: selectedCourse.id },
+        {
+          courseId: selectedCourse.id,
+          score: 15,
+        },
         {
           onSuccess: () => {
             setSelectedCourse(null);
@@ -67,10 +70,10 @@ export default function AvailableCoursesPage() {
           دروس قابل درخواست
         </Typography>
         <CourseTable
-          courses={data?.courses || []}
+          courses={data?.results || []}
           onRequestClick={handleRequestClick}
           page={page}
-          totalItems={data?.totalItems || 0}
+          totalItems={data?.count || 0}
           onPageChange={handlePageChange}
           pageSize={pageSize}
           onPageSizeChange={handlePageSizeChange}
@@ -86,4 +89,4 @@ export default function AvailableCoursesPage() {
       />
     </Container>
   );
-} 
+}

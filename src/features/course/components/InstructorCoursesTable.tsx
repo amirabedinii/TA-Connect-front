@@ -25,7 +25,7 @@ export default function InstructorCoursesTable({ courses }: InstructorCoursesTab
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const router = useRouter();
 
-  const handleRowClick = (courseId: string) => {
+  const handleRowClick = (courseId: number) => {
     router.push(`/student/courses/${courseId}`);
   };
 

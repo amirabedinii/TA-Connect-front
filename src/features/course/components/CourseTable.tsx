@@ -50,7 +50,7 @@ export default function CourseTable({
     onPageChange(1);
   };
 
-  const handleRowClick = (courseId: string) => {
+  const handleRowClick = (courseId: number) => {
     router.push(`courses/${courseId}`);
   };
 
@@ -74,7 +74,7 @@ export default function CourseTable({
                 {course.name}
               </Typography>
               <Typography color="text.secondary" gutterBottom>
-                استاد: {course?.instructor?.first_name} {course?.instructor?.last_name}
+                استاد: {course.instructor.first_name} {course.instructor.last_name}
               </Typography>
               <Typography color="text.secondary" gutterBottom>
                 نیمسال: {course.semester}
@@ -83,7 +83,7 @@ export default function CourseTable({
                 variant="contained"
                 color="primary"
                 onClick={(e) => {
-                  e.stopPropagation(); // Prevent row click when clicking the button
+                  e.stopPropagation();
                   onRequestClick(course);
                 }}
                 sx={{ mt: 1 }}
@@ -143,7 +143,7 @@ export default function CourseTable({
                     variant="contained"
                     color="primary"
                     onClick={(e) => {
-                      e.stopPropagation(); // Prevent row click when clicking the button
+                      e.stopPropagation();
                       onRequestClick(course);
                     }}
                   >
@@ -162,7 +162,7 @@ export default function CourseTable({
         onPageChange={handleChangePage}
         rowsPerPage={pageSize}
         onRowsPerPageChange={handleChangeRowsPerPage}
-        rowsPerPageOptions={[5, 10, 25]}
+        rowsPerPageOptions={[10]}
         labelRowsPerPage="تعداد در هر صفحه"
         labelDisplayedRows={({ from, to, count }) =>
           `${from}-${to} از ${count !== -1 ? count : `بیش از ${to}`}`
