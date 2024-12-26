@@ -10,6 +10,9 @@ import {
   TA,
   InstructorResponse,
   InstructorCoursesResponse,
+  Request,
+  RequestResponse,
+  RequestStatus,
 } from "../types/course.types";
 
 export const useCourse = () => {
@@ -238,6 +241,33 @@ export const useCourse = () => {
       },
     });
 
+  const useGetRequests = (page: number = 1, pageSize: number = 10) =>
+    useQuery<RequestResponse>({
+      queryKey: ["requests", page, pageSize],
+      queryFn: () => {
+        // Create mock requests
+        const mockRequests: Request[] = Array.from({ length: 15 }, (_, i) => ({
+          id: (i + 1).toString(),
+          course: allCourses[i % allCourses.length],
+          status: [RequestStatus.PENDING, RequestStatus.ACCEPTED, RequestStatus.DECLINED][
+            Math.floor(Math.random() * 3)
+          ],
+          created_at: new Date(
+            Date.now() - Math.floor(Math.random() * 30) * 24 * 60 * 60 * 1000
+          ).toISOString(),
+        }));
+
+        const startIndex = (page - 1) * pageSize;
+        const endIndex = startIndex + pageSize;
+
+        return Promise.resolve({
+          requests: mockRequests.slice(startIndex, endIndex),
+          totalPages: Math.ceil(mockRequests.length / pageSize),
+          totalItems: mockRequests.length,
+        });
+      },
+    });
+
   return {
     useGetAvailableCourses,
     useRequestCourse,
@@ -245,5 +275,6 @@ export const useCourse = () => {
     useGetCourseTAs,
     useGetInstructorDetails,
     useGetInstructorCourses,
+    useGetRequests,
   };
 };

@@ -53,3 +53,22 @@ export interface InstructorCoursesResponse {
   totalItems?: number;
   totalPages?: number; 
 }
+
+export enum RequestStatus {
+  PENDING = 'pending',
+  ACCEPTED = 'accepted',
+  DECLINED = 'declined',
+}
+
+export interface Request {
+  id: string;
+  course: Course;
+  status: RequestStatus;
+  created_at: string; // ISO date string
+}
+
+export interface RequestResponse {
+  requests: Request[];
+  totalPages: number;
+  totalItems: number;
+}
