@@ -1,3 +1,9 @@
+export enum RequestStatus {
+  PENDING = 'pending',
+  ACCEPTED = 'accepted',
+  DECLINED = 'declined',
+}
+
 export interface Instructor {
   id: string;
   first_name: string;
@@ -26,9 +32,8 @@ export interface CourseDetailsResponse {
 }
 
 export interface CourseRequest {
-  course_ref: string;
-  student_ref: string;
-  condition: string;
+  courseId: number;
+  score: number;
 }
 
 export interface TA {
