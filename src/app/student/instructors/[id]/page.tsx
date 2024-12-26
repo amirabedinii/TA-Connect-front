@@ -18,7 +18,7 @@ import { useParams } from "next/navigation";
 import { CircularProgress } from "@mui/material";
 import {
   Email,
-  Person,
+  // Person,
   Badge,
   Science,
   ContactPhone,

@@ -6,7 +6,7 @@ import {
   TableHead,
   TableRow,
   Paper,
-  Typography,
+//   Typography,
   Chip,
 } from "@mui/material";
 import { TA } from "../types/course.types";

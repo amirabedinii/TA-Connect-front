@@ -6,13 +6,13 @@ import {
   Typography,
   Grid,
   Box,
-  List,
-  ListItem,
-  ListItemText,
-  Divider,
+  // List,
+  // ListItem,
+  // ListItemText,
+  // Divider,
   Button,
-  useTheme,
-  useMediaQuery,
+  // useTheme,
+  // useMediaQuery,
   Link,
 } from "@mui/material";
 import { useCourse } from "@/features/course/hooks/useCourse";
@@ -24,8 +24,8 @@ import TATable from "@/features/course/components/TATable";
 export default function CourseDetailsPage() {
   const params = useParams();
   const router = useRouter();
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down("md"));
+  // const theme = useTheme();
+  // const isMobile = useMediaQuery(theme.breakpoints.down("md"));
   const courseId = params.id as string;
   const { useGetCourseDetails, useGetCourseTAs } = useCourse();
   const { data: courseData, isLoading: isLoadingCourse } = useGetCourseDetails(courseId);

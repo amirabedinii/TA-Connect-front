@@ -38,7 +38,7 @@ export default function RequestModal({
             نام درس: {course.name}
           </Typography>
           <Typography color="text.secondary" gutterBottom>
-            استاد: {course.teacherName}
+            استاد: {`${course?.instructor?.first_name} ${course?.instructor?.last_name}`}
           </Typography>
           <Typography color="text.secondary" gutterBottom>
             نیمسال: {course.semester}
@@ -58,4 +58,4 @@ export default function RequestModal({
       </DialogActions>
     </Dialog>
   );
-} 
+}
