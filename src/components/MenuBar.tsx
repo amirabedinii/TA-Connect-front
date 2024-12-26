@@ -91,12 +91,11 @@ export default function MenuBar() {
             >
               <MenuIcon />
             </IconButton>
-            <Typography 
-              variant="h6" 
-              noWrap 
+            <Typography
+              variant="h6"
+              noWrap
               component="div"
-              suppressHydrationWarning
-              sx={{ flexGrow: 1, cursor: 'pointer' }}
+              sx={{ flexGrow: 1, cursor: "pointer" }}
               onClick={() => router.push("/")}
             >
               TA Connect

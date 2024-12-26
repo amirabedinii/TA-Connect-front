@@ -11,13 +11,9 @@ export default function AvailableCoursesPage() {
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const { useGetAvailableCourses, useRequestCourse } = useCourse();
-  const { data, isLoading, error } = useGetAvailableCourses(page, pageSize);
+  const { data, isLoading } = useGetAvailableCourses(page, pageSize);
   const { mutate: requestCourse, isPending: isRequesting } = useRequestCourse();
   const [selectedCourse, setSelectedCourse] = useState<Course | null>(null);
-
-  console.log('Available Courses Data:', data);
-  console.log('Loading State:', isLoading);
-  console.log('Error:', error);
 
   const handleRequestClick = (course: Course) => {
     setSelectedCourse(course);
@@ -31,13 +27,10 @@ export default function AvailableCoursesPage() {
     setPageSize(newPageSize);
   };
 
-  const handleConfirmRequest = (score: number) => {
+  const handleConfirmRequest = () => {
     if (selectedCourse) {
       requestCourse(
-        { 
-          courseId: selectedCourse.id,
-          score: score 
-        },
+        { courseId: selectedCourse.id },
         {
           onSuccess: () => {
             setSelectedCourse(null);
