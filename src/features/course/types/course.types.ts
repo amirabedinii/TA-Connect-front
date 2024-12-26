@@ -17,6 +17,17 @@ export interface CourseError {
 
 
 export interface CourseRequest {
-  courseRef: string;
-  studentRef: string;
+  id: string;
+  courseId: string;
+  courseName: string;
+  teacherName: string;
+  semester: string;
+  requestDate: string;
+  status: 'SUBMITTED' | 'APPROVED' | 'REJECTED';
+}
+
+export interface CourseRequestResponse {
+  requests: CourseRequest[];
+  totalPages: number;
+  totalItems: number;
 } 

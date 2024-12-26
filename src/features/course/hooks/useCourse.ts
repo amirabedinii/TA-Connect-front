@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { clientFetch } from "@/lib/api/clientApi";
 import { showToast } from "@/lib/utils/utils";
-import {  CourseRequest, CourseResponse } from "../types/course.types";
+import {  CourseRequest, CourseResponse, CourseRequestResponse } from "../types/course.types";
 
 export const useCourse = () => {
   const queryClient = useQueryClient();
@@ -75,9 +75,24 @@ export const useCourse = () => {
 
   const useRequestCourse = () =>
     useMutation<CourseRequest, Error, { courseId: string }>({
-      mutationFn: (data) => clientFetch.post("/courses/request/", data),
+      mutationFn: (data) => {
+        // Simulate API call
+        const course = allCourses.find(c => c.id === data.courseId);
+        const newRequest: CourseRequest = {
+          id: Math.random().toString(36).substr(2, 9),
+          courseId: data.courseId,
+          courseName: course?.name || '',
+          teacherName: course?.teacherName || '',
+          semester: course?.semester || '',
+          requestDate: new Date().toISOString(),
+          status: 'SUBMITTED'
+        };
+        
+        return Promise.resolve(newRequest);
+      },
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: ["available-courses"] });
+        queryClient.invalidateQueries({ queryKey: ["course-requests"] });
         showToast.success("درخواست شما با موفقیت ثبت شد");
       },
       onError: (error) => {
@@ -85,8 +100,23 @@ export const useCourse = () => {
       },
     });
 
+  const useGetCourseRequests = (page: number = 1, pageSize: number = 10) =>
+    useQuery<CourseRequestResponse>({
+      queryKey: ["course-requests", page, pageSize],
+      queryFn: () => {
+        // Simulate API response
+        const requests: CourseRequest[] = JSON.parse(localStorage.getItem('courseRequests') || '[]');
+        return Promise.resolve({
+          requests: requests.slice((page - 1) * pageSize, page * pageSize),
+          totalPages: Math.ceil(requests.length / pageSize),
+          totalItems: requests.length,
+        });
+      },
+    });
+
   return {
     useGetAvailableCourses,
     useRequestCourse,
+    useGetCourseRequests,
   };
 };
