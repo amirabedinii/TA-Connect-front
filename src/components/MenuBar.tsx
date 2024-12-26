@@ -49,11 +49,11 @@ export default function MenuBar() {
 
     const roleBasedItems = {
       student: [
-        { name: "درخواست‌های من", path: "/requests", icon: <ListAltIcon /> },
-        { name: "دروس قابل درخواست", path: "/available-courses", icon: <SchoolIcon /> },
+        { name: "درخواست‌های من", path: "student/requests", icon: <ListAltIcon /> },
+        { name: "دروس قابل درخواست", path: "student/available-courses", icon: <SchoolIcon /> },
       ],
       teacher: [
-        { name: "دروس من", path: "/my-courses", icon: <SchoolIcon /> },
+        { name: "دروس من", path: "instructor/my-courses", icon: <SchoolIcon /> },
       ],
     };
 

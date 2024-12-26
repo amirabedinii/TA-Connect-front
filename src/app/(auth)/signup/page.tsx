@@ -104,6 +104,7 @@ export default function SignUpPage() {
                 autoComplete="given-name"
                 required
                 fullWidth
+                variant="outlined"
                 id="first_name"
                 label="نام"
                 InputProps={{ sx: { borderRadius: 2 } }}

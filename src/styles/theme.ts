@@ -51,7 +51,13 @@ const theme = createTheme({
               borderColor: 'rgba(255, 255, 255, 0.23)',
             },
             '&:hover fieldset': {
-              borderColor: 'rgba(255, 255, 255, 0.4)',
+              borderColor: darkColors.primary.main,
+            },
+            '&.Mui-focused fieldset': {
+              borderColor: darkColors.primary.main,
+            },
+            '&.Mui-focused': {
+              backgroundColor: 'rgba(255, 255, 255, 0.13)',
             },
             '&:hover': {
               backgroundColor: 'rgba(255, 255, 255, 0.13)',
