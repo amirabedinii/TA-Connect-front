@@ -23,7 +23,7 @@ export interface User {
 
 // Student Interface extending User
 export interface Student extends User {
-  studentNumber: string;
+  student_number: string;
   biography?: string;
 }
 
@@ -52,7 +52,7 @@ export interface Course {
   instructor: Instructor;
   headTA?: Request; // Nullable, represents the head TA
   condition?: number; // Nullable, minimum score condition for the course
-  acceptedStudents: Student[]; // List of students who meet the criteria
+  accepted_students: Student[]; // List of students who meet the criteria
 }
 
 // API Response Interfaces
@@ -85,7 +85,7 @@ export interface UserCreateRequest {
   email?: string;
   password: string;
   role: UserRole;
-  studentNumber?: string;
+  student_number?: string;
   staffId?: string;
   way_of_communication?: string;
   research_fields?: string;
@@ -103,3 +103,4 @@ export interface CourseUpdateRequest {
 
 export interface CoursesResponse extends ApiResponse<Course> {}
 
+export interface RequestsResponse extends ApiResponse<Request> {}

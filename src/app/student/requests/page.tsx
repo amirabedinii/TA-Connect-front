@@ -47,9 +47,9 @@ export default function RequestsPage() {
           درخواست‌های من
         </Typography>
         <RequestsTable
-          requests={data || []}
+          requests={data?.results || []}
           page={page}
-          totalItems={data?.length || 0}
+          totalItems={data?.count || 0}
           onPageChange={handlePageChange}
           pageSize={pageSize}
           onPageSizeChange={handlePageSizeChange}

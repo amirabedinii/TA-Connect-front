@@ -27,12 +27,12 @@ export default function AvailableCoursesPage() {
     setPageSize(newPageSize);
   };
 
-  const handleConfirmRequest = () => {
+  const handleConfirmRequest = (score: number) => {
     if (selectedCourse) {
       requestCourse(
         {
-          courseId: selectedCourse.id,
-          score: 15,
+          course_id: selectedCourse.id,
+          score: score,
         },
         {
           onSuccess: () => {

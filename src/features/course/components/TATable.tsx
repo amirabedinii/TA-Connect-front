@@ -32,7 +32,7 @@ export default function TATable({ tas, headTA }: TATableProps) {
             <TableRow key={ta.id}>
               <TableCell>{ta.first_name}</TableCell>
               <TableCell>{ta.last_name}</TableCell>
-              <TableCell>{ta.studentNumber}</TableCell>
+              <TableCell>{ta.student_number}</TableCell>
               <TableCell>
                 {headTA?.id === ta.id ? (
                   <Chip 

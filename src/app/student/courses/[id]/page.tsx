@@ -75,7 +75,7 @@ export default function CourseDetailsPage() {
                   py: 1
                 }}
               >
-               مشاهده وضعیت 
+               مشاهده بقیه درس ها 
               </Button>
             </Box>
           </Grid>
@@ -121,7 +121,7 @@ export default function CourseDetailsPage() {
             {isLoadingCourse ? (
               <CircularProgress />
             ) : (
-              <TATable tas={course.acceptedStudents|| []} />
+              <TATable tas={course.accepted_students|| []} />
             )}
           </Grid>
         </Grid>
