@@ -1,0 +1,86 @@
+name: CI Pipeline
+
+on:
+  push:
+    branches:
+      - main
+      - feature/*
+      - bug-fix/*
+  pull_request:
+    branches:
+      - main
+      - feature/*
+      - bug-fix/*
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    services:
+      docker:
+        image: docker:24.0.5
+        options: --privileged
+        ports:
+          - 3000:3000
+        volumes:
+          - /var/run/docker.sock:/var/run/docker.sock
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Cache Docker Layers
+        uses: actions/cache@v3
+        with:
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-docker-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-docker-
+
+      - name: Install Docker Compose
+        run: |
+          curl -L "https://github.com/docker/compose/releases/download/v2.20.2/docker-compose-linux-x86_64" -o /usr/local/bin/docker-compose
+          chmod +x /usr/local/bin/docker-compose
+          docker-compose version
+
+      - name: Build Docker Images
+        run: docker-compose build
+
+          #- name: Run Unit Tests
+          #  run: docker-compose run --rm nextjs npm test
+
+          #- name: Run Linting (Optional)
+          #  run: docker-compose run --rm nextjs npm run lint
+
+          #- name: Run Integration Tests (Optional)
+          #  run: docker-compose run --rm nextjs npm run test:integration
+
+      - name: Start Application
+        run: docker-compose up -d
+
+      - name: Verify Application
+        run: |
+          set -xe
+          echo "Waiting for the Next app to become healthy..."
+          for i in {1..15}; do
+            if curl -f http://localhost:3000/ 2>/dev/stdout ; then
+              echo "Next app is healthy!"
+              break
+            fi
+            echo "Next app is not ready yet. Retrying in 5 seconds..."
+            sleep 5
+            if [ $i -eq 15 ]; then
+              echo "Next app failed to start in time."
+              docker logs frontend 
+              exit 1
+            fi
+          done
+
+
+      - name: Shut Down Application
+        if: always()
+        run: docker-compose down
+
