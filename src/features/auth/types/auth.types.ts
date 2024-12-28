@@ -15,8 +15,8 @@ export interface LoginCredentials {
 export interface AuthResponse {
   id: string;
   email: string;
-  firstName: string;
-  lastName: string;
+  first_name: string;
+  last_name: string;
 }
 
 export interface LoginResponse {

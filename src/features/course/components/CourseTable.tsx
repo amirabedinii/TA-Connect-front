@@ -45,12 +45,14 @@ export default function CourseTable({
     onPageChange(newPage + 1);
   };
 
-  const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChangeRowsPerPage = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     onPageSizeChange(parseInt(event.target.value, 10));
     onPageChange(1);
   };
 
-  const handleRowClick = (courseId: string) => {
+  const handleRowClick = (courseId: number) => {
     router.push(`courses/${courseId}`);
   };
 
@@ -58,14 +60,14 @@ export default function CourseTable({
     return (
       <Stack spacing={2}>
         {courses.map((course) => (
-          <Card 
-            key={course.id} 
-            sx={{ 
+          <Card
+            key={course.id}
+            sx={{
               width: "100%",
               cursor: "pointer",
-              '&:hover': {
-                backgroundColor: 'action.hover',
-              }
+              "&:hover": {
+                backgroundColor: "action.hover",
+              },
             }}
             onClick={() => handleRowClick(course.id)}
           >
@@ -74,7 +76,8 @@ export default function CourseTable({
                 {course.name}
               </Typography>
               <Typography color="text.secondary" gutterBottom>
-                استاد: {course?.instructor?.first_name} {course?.instructor?.last_name}
+                استاد: {course.instructor.first_name}{" "}
+                {course.instructor.last_name}
               </Typography>
               <Typography color="text.secondary" gutterBottom>
                 نیمسال: {course.semester}
@@ -83,7 +86,7 @@ export default function CourseTable({
                 variant="contained"
                 color="primary"
                 onClick={(e) => {
-                  e.stopPropagation(); // Prevent row click when clicking the button
+                  e.stopPropagation();
                   onRequestClick(course);
                 }}
                 sx={{ mt: 1 }}
@@ -101,7 +104,7 @@ export default function CourseTable({
           onPageChange={handleChangePage}
           rowsPerPage={pageSize}
           onRowsPerPageChange={handleChangeRowsPerPage}
-          rowsPerPageOptions={[5, 10, 25]}
+          rowsPerPageOptions={[10]}
           labelRowsPerPage="تعداد در هر صفحه"
           labelDisplayedRows={({ from, to, count }) =>
             `${from}-${to} از ${count !== -1 ? count : `بیش از ${to}`}`
@@ -125,25 +128,27 @@ export default function CourseTable({
           </TableHead>
           <TableBody>
             {courses.map((course) => (
-              <TableRow 
+              <TableRow
                 key={course.id}
                 onClick={() => handleRowClick(course.id)}
-                sx={{ 
-                  cursor: 'pointer',
-                  '&:hover': {
-                    backgroundColor: 'action.hover',
-                  }
+                sx={{
+                  cursor: "pointer",
+                  "&:hover": {
+                    backgroundColor: "action.hover",
+                  },
                 }}
               >
                 <TableCell>{course.name}</TableCell>
-                <TableCell>{course.instructor.first_name} {course.instructor.last_name}</TableCell>
+                <TableCell>
+                  {course.instructor.first_name} {course.instructor.last_name}
+                </TableCell>
                 <TableCell>{course.semester}</TableCell>
                 <TableCell>
                   <Button
                     variant="contained"
                     color="primary"
                     onClick={(e) => {
-                      e.stopPropagation(); // Prevent row click when clicking the button
+                      e.stopPropagation();
                       onRequestClick(course);
                     }}
                   >
@@ -162,7 +167,7 @@ export default function CourseTable({
         onPageChange={handleChangePage}
         rowsPerPage={pageSize}
         onRowsPerPageChange={handleChangeRowsPerPage}
-        rowsPerPageOptions={[5, 10, 25]}
+        rowsPerPageOptions={[10]}
         labelRowsPerPage="تعداد در هر صفحه"
         labelDisplayedRows={({ from, to, count }) =>
           `${from}-${to} از ${count !== -1 ? count : `بیش از ${to}`}`
@@ -170,4 +175,4 @@ export default function CourseTable({
       />
     </>
   );
-} 
+}

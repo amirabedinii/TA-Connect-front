@@ -6,8 +6,10 @@ import { useCourse } from "@/features/course/hooks/useCourse";
 import CourseTable from "@/features/course/components/CourseTable";
 import RequestModal from "@/features/course/components/RequestModal";
 import { Course } from "@/features/course/types/course.types";
+import { useRouter } from "next/navigation";
 
 export default function AvailableCoursesPage() {
+  const router = useRouter();
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const { useGetAvailableCourses, useRequestCourse } = useCourse();
@@ -27,12 +29,16 @@ export default function AvailableCoursesPage() {
     setPageSize(newPageSize);
   };
 
-  const handleConfirmRequest = () => {
+  const handleConfirmRequest = (score: number) => {
     if (selectedCourse) {
       requestCourse(
-        { courseId: selectedCourse.id },
+        {
+          course_id: selectedCourse.id,
+          score: score,
+        },
         {
           onSuccess: () => {
+            router.push("/student/requests");
             setSelectedCourse(null);
           },
         }
@@ -67,10 +73,10 @@ export default function AvailableCoursesPage() {
           دروس قابل درخواست
         </Typography>
         <CourseTable
-          courses={data?.courses || []}
+          courses={data?.results || []}
           onRequestClick={handleRequestClick}
           page={page}
-          totalItems={data?.totalItems || 0}
+          totalItems={data?.count || 0}
           onPageChange={handlePageChange}
           pageSize={pageSize}
           onPageSizeChange={handlePageSizeChange}
@@ -86,4 +92,4 @@ export default function AvailableCoursesPage() {
       />
     </Container>
   );
-} 
+}

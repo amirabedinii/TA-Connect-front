@@ -20,7 +20,7 @@ import { showToast } from "@/lib/utils/utils";
 const loginSchema = z.object({
   root: z.string().optional(),
   username: z.string().min(1, "نام کاربری الزامی است"),
-  password: z.string().min(6, "رمز عبور باید حداقل ۶ کاراکتر باشد"),
+  password: z.string().min(2, "رمز عبور باید حداقل ۶ کاراکتر باشد"),
 });
 
 type LoginFormData = z.infer<typeof loginSchema>;

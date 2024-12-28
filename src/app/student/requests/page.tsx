@@ -39,13 +39,17 @@ export default function RequestsPage() {
           background: (theme) => theme.palette.background.paper,
         }}
       >
-        <Typography component="h1" variant="h4" sx={{ mb: 3, fontWeight: "bold" }}>
+        <Typography
+          component="h1"
+          variant="h4"
+          sx={{ mb: 3, fontWeight: "bold" }}
+        >
           درخواست‌های من
         </Typography>
         <RequestsTable
-          requests={data?.requests || []}
+          requests={data?.results || []}
           page={page}
-          totalItems={data?.totalItems || 0}
+          totalItems={data?.count || 0}
           onPageChange={handlePageChange}
           pageSize={pageSize}
           onPageSizeChange={handlePageSizeChange}
@@ -53,4 +57,4 @@ export default function RequestsPage() {
       </Paper>
     </Container>
   );
-} 
+}

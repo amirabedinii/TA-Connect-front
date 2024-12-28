@@ -1,9 +1,10 @@
 import axios from "axios";
 import { showToast } from "../utils/utils";
 
-export const BASE_URL = process.env.BASE_URL || "http://127.0.0.1:8000";
+export const BASE_URL = process.env.BASE_URL || "http://127.0.0.1:80";
 
 export const createApiClient = (access?: string ) => {
+  console.log(process.env.BASE_URL, "BASE_URL");
   const client = axios.create({
     baseURL: BASE_URL,
     headers: {

@@ -6,7 +6,7 @@ export function getClientSideAPI() {
   // Only access localStorage on client side
   if (typeof window !== 'undefined') {
     accessToken = localStorage.getItem('access') || undefined;
-    console.log(accessToken, "accessToken");
+    //console.log(accessToken, "accessToken");
   }
 
   return createApiClient(accessToken);

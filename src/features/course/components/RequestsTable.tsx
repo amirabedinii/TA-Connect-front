@@ -88,7 +88,7 @@ export default function RequestsTable({
                 </TableCell>
                 <TableCell>{request.course.semester}</TableCell>
                 <TableCell>
-                  {new Date(request.created_at).toLocaleDateString("fa-IR")}
+                  {new Date(request.date).toLocaleDateString("fa-IR")}
                 </TableCell>
                 <TableCell>
                   <Chip
@@ -109,7 +109,7 @@ export default function RequestsTable({
         onPageChange={handleChangePage}
         rowsPerPage={pageSize}
         onRowsPerPageChange={handleChangeRowsPerPage}
-        rowsPerPageOptions={[5, 10, 25]}
+        rowsPerPageOptions={[10]}
         labelRowsPerPage="تعداد در هر صفحه"
         labelDisplayedRows={({ from, to, count }) =>
           `${from}-${to} از ${count !== -1 ? count : `بیش از ${to}`}`
@@ -117,4 +117,4 @@ export default function RequestsTable({
       />
     </Stack>
   );
-} 
+}

@@ -17,9 +17,9 @@ import { useCourse } from "@/features/course/hooks/useCourse";
 import { useParams } from "next/navigation";
 import { CircularProgress } from "@mui/material";
 import {
-  Email,
+  // Email,
   // Person,
-  Badge,
+  // Badge,
   Science,
   ContactPhone,
 } from "@mui/icons-material";
@@ -30,7 +30,8 @@ export default function InstructorDetailsPage() {
   const instructorId = params.id as string;
   const { useGetInstructorDetails, useGetInstructorCourses } = useCourse();
   const { data, isLoading } = useGetInstructorDetails(instructorId);
-  const { data: coursesData, isLoading: isLoadingCourses } = useGetInstructorCourses(instructorId);
+  const { data: coursesData, isLoading: isLoadingCourses } =
+    useGetInstructorCourses(instructorId);
 
   if (isLoading || isLoadingCourses) {
     return (
@@ -40,7 +41,7 @@ export default function InstructorDetailsPage() {
     );
   }
 
-  const instructor = data?.instructor;
+  const instructor = data;
 
   if (!instructor) return null;
 
@@ -73,25 +74,6 @@ export default function InstructorDetailsPage() {
             <List>
               <ListItem>
                 <ListItemIcon>
-                  <Badge />
-                </ListItemIcon>
-                <ListItemText
-                  primary="کد پرسنلی"
-                  secondary={instructor.staff_id}
-                />
-              </ListItem>
-              <Divider variant="inset" component="li" />
-
-              <ListItem>
-                <ListItemIcon>
-                  <Email />
-                </ListItemIcon>
-                <ListItemText primary="ایمیل" secondary={instructor.email} />
-              </ListItem>
-              <Divider variant="inset" component="li" />
-
-              <ListItem>
-                <ListItemIcon>
                   <ContactPhone />
                 </ListItemIcon>
                 <ListItemText
@@ -100,14 +82,16 @@ export default function InstructorDetailsPage() {
                     <Box
                       sx={{ display: "flex", gap: 1, flexWrap: "wrap", mt: 1 }}
                     >
-                      {instructor?.way_of_communication?.map((way) => (
-                        <Chip key={way} label={way} size="small" />
-                      ))}
+                      <Chip
+                        key={instructor?.way_of_communication}
+                        label={instructor?.way_of_communication}
+                        size="small"
+                      />
                     </Box>
                   }
                 />
               </ListItem>
-              <Divider variant="inset" component="li" />  
+              <Divider variant="inset" component="li" />
               <ListItem>
                 <ListItemIcon>
                   <Science />
@@ -116,15 +100,24 @@ export default function InstructorDetailsPage() {
                   primary="زمینه‌های تحقیقاتی"
                   secondary={
                     <Typography component="div" variant="body2">
-                      <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap", mt: 1 }}>
-                        {instructor?.research_fields?.map((field) => (
-                          <Chip
-                            key={field}
-                            label={field}
-                            size="small"
-                            color="primary"
-                          />
-                        ))}
+                      <Box
+                        sx={{
+                          display: "flex",
+                          gap: 1,
+                          flexWrap: "wrap",
+                          mt: 1,
+                        }}
+                      >
+                        {instructor?.research_fields
+                          ?.split(" ")
+                          .map((field) => (
+                            <Chip
+                              key={field}
+                              label={field}
+                              size="small"
+                              color="primary"
+                            />
+                          ))}
                       </Box>
                     </Typography>
                   }
@@ -135,11 +128,16 @@ export default function InstructorDetailsPage() {
 
           {/* Courses Section */}
           <Grid item xs={12}>
-            <Typography variant="h6" gutterBottom fontWeight="bold" color="primary">
+            <Typography
+              variant="h6"
+              gutterBottom
+              fontWeight="bold"
+              color="primary"
+            >
               دروس استاد
             </Typography>
-            {coursesData?.courses && (
-              <InstructorCoursesTable courses={coursesData.courses} />
+            {coursesData?.results && (
+              <InstructorCoursesTable courses={coursesData.results} />
             )}
           </Grid>
         </Grid>

@@ -6,16 +6,16 @@ import {
   TableHead,
   TableRow,
   Paper,
-//   Typography,
   Chip,
 } from "@mui/material";
-import { TA } from "../types/course.types";
+import { Student } from "../types/course.types";
 
 interface TATableProps {
-  tas: TA[];
+  tas: Student[];
+  headTA?: Student;
 }
 
-export default function TATable({ tas }: TATableProps) {
+export default function TATable({ tas, headTA }: TATableProps) {
   return (
     <TableContainer component={Paper} sx={{ mt: 4 }}>
       <Table>
@@ -34,7 +34,7 @@ export default function TATable({ tas }: TATableProps) {
               <TableCell>{ta.last_name}</TableCell>
               <TableCell>{ta.student_number}</TableCell>
               <TableCell>
-                {ta.is_head_ta ? (
+                {headTA?.id === ta.id ? (
                   <Chip 
                     label="سر دستیار" 
                     color="primary" 
