@@ -31,7 +31,6 @@ export const useCourse = () => {
         onSuccess: () => {
           queryClient.invalidateQueries({ queryKey: ["available-courses"] });
           showToast.success("درخواست شما با موفقیت ثبت شد");
-          router.push("/student/requests");
         },
         onError: (error) => {
           showToast.error(error.message || "خطا در ثبت درخواست");

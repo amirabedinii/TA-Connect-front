@@ -101,6 +101,5 @@ export interface CourseUpdateRequest {
   condition?: number;
 }
 
-export interface CoursesResponse extends ApiResponse<Course> {}
-
-export interface RequestsResponse extends ApiResponse<Request> {}
+export type CoursesResponse = ApiResponse<Course>;
+export type RequestsResponse = ApiResponse<Request>;

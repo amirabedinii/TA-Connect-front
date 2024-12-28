@@ -6,8 +6,10 @@ import { useCourse } from "@/features/course/hooks/useCourse";
 import CourseTable from "@/features/course/components/CourseTable";
 import RequestModal from "@/features/course/components/RequestModal";
 import { Course } from "@/features/course/types/course.types";
+import { useRouter } from "next/navigation";
 
 export default function AvailableCoursesPage() {
+  const router = useRouter();
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const { useGetAvailableCourses, useRequestCourse } = useCourse();
@@ -36,6 +38,7 @@ export default function AvailableCoursesPage() {
         },
         {
           onSuccess: () => {
+            router.push("/student/requests");
             setSelectedCourse(null);
           },
         }

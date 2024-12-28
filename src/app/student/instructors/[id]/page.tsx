@@ -17,9 +17,9 @@ import { useCourse } from "@/features/course/hooks/useCourse";
 import { useParams } from "next/navigation";
 import { CircularProgress } from "@mui/material";
 import {
-  Email,
+  // Email,
   // Person,
-  Badge,
+  // Badge,
   Science,
   ContactPhone,
 } from "@mui/icons-material";

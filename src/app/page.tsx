@@ -1,8 +1,15 @@
+import { redirect } from 'next/navigation';
+import { cookies } from 'next/headers';
 
-export default function Home() {
-  return (
-    <div>
-      <h1>Hello World</h1>
-    </div>
-  );
+export default async function Home() {
+  const cookieStore = await cookies();
+  const isAuthenticated = cookieStore?.get('access');
+
+  if (!isAuthenticated) {
+    redirect('/login');
+  } else {
+    redirect('/profile');
+  }
+
+  return null;
 }
