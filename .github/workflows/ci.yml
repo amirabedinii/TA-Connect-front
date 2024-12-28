@@ -58,12 +58,27 @@ jobs:
           #- name: Run Integration Tests (Optional)
           #  run: docker-compose run --rm nextjs npm run test:integration
 
-      - name: Start Application (Optional)
+      - name: Start Application
         run: docker-compose up -d
 
-      - name: Verify Application (Optional)
+      - name: Verify Application
         run: |
-          curl --fail http://localhost:3000 || exit 1
+          set -xe
+          echo "Waiting for the Next app to become healthy..."
+          for i in {1..15}; do
+            if curl -f http://localhost:3000/ 2>/dev/stdout ; then
+              echo "Next app is healthy!"
+              break
+            fi
+            echo "Next app is not ready yet. Retrying in 5 seconds..."
+            sleep 5
+            if [ $i -eq 15 ]; then
+              echo "Next app failed to start in time."
+              docker logs frontend 
+              exit 1
+            fi
+          done
+
 
       - name: Shut Down Application
         if: always()
