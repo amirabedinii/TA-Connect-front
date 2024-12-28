@@ -8,7 +8,6 @@ import {
   Instructor,
   UserCreateRequest,
 } from "../types/course.types";
-import router from "next/router";
 
 export const useCourse = () => {
   const queryClient = useQueryClient();
