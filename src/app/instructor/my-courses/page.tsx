@@ -1,3 +1,19 @@
+/*
+Code Review Comments:
+
+Strengths:
+- Minimal and clean component structure
+- Effective use of Material-UI components
+
+Improvements:
+- Add implementation details
+- Include proper loading states
+- Add error handling
+- Define types for props
+- Implement data fetching logic
+*/
+
+
 "use client";
 
 import { Container, Typography, Paper } from "@mui/material";
