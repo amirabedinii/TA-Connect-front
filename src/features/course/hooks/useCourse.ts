@@ -7,6 +7,7 @@ import {
   CoursesResponse,
   Instructor,
   UserCreateRequest,
+  Student,
 } from "../types/course.types";
 
 export const useCourse = () => {
@@ -102,6 +103,21 @@ export const useCourse = () => {
       },
     });
 
+  const useUpdateCourseHeadTA = () =>
+    useMutation<void, Error, { courseId: string; student: Student | null }>({
+      mutationFn: ({ courseId, student }) =>
+        clientFetch.patch(`/course/courses/${courseId}/`, {
+          head_ta: student?.id || null
+        }),
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ["course"] });
+        showToast.success("سر دستیار با موفقیت تغییر کرد");
+      },
+      onError: (error) => {
+        showToast.error(error.message || "خطا در تغییر سر دستیار");
+      },
+    });
+
   return {
     useGetAvailableCourses,
     useRequestCourse,
@@ -113,5 +129,6 @@ export const useCourse = () => {
     useGetInstructorMyCourses,
     useGetCourseRequests,
     useUpdateRequestStatus,
+    useUpdateCourseHeadTA,
   };
 };

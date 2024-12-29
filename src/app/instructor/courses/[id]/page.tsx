@@ -21,11 +21,17 @@ export default function InstructorCourseDetailsPage() {
   const params = useParams();
   const courseId = params.id as string;
   const [activeTab, setActiveTab] = useState(0);
-  const { useGetCourseDetails, useGetCourseRequests, useUpdateRequestStatus } = useCourse();
+  const { 
+    useGetCourseDetails, 
+    useGetCourseRequests, 
+    useUpdateRequestStatus,
+    useUpdateCourseHeadTA 
+  } = useCourse();
   
   const { data: course, isLoading } = useGetCourseDetails(courseId);
   const { data: requests, isLoading: isLoadingRequests } = useGetCourseRequests(courseId);
   const { mutate: updateStatus, isPending: isUpdating } = useUpdateRequestStatus();
+  const { mutate: updateHeadTA, isPending: isUpdatingHeadTA } = useUpdateCourseHeadTA();
 
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
     setActiveTab(newValue);
@@ -33,6 +39,17 @@ export default function InstructorCourseDetailsPage() {
 
   const handleStatusUpdate = (requestId: number, status: 'accepted' | 'declined') => {
     updateStatus({ requestId, status });
+  };
+
+  const handleHeadTAChange = (studentId: number | null) => {
+    const selectedStudent = studentId 
+      ? course?.accepted_students.find(s => s.id === studentId)
+      : null;
+      
+    updateHeadTA({ 
+      courseId, 
+      student: selectedStudent ?? null
+    });
   };
 
   if (isLoading || isLoadingRequests) {
@@ -86,6 +103,8 @@ export default function InstructorCourseDetailsPage() {
                 <TATable 
                   tas={course.accepted_students || []}
                   headTA={course.headTA?.student}
+                  isInstructor={true}
+                  onHeadTAChange={handleHeadTAChange}
                 />
               )}
             </Box>
