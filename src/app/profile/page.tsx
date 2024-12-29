@@ -20,8 +20,11 @@ const profileSchema = z.object({
   first_name: z.string().min(2, "نام باید حداقل ۲ کاراکتر باشد"),
   last_name: z.string().min(2, "نام خانوادگی باید حداقل ۲ کاراکتر باشد"),
   username: z.string().min(1, "نام کاربری الزامی است"),
-  student_number: z.string().min(1, "شماره دانشجویی الزامی است"),
+  student_number: z.string().optional(),
   biography: z.string().optional(),
+  way_of_communication: z.string().optional(),
+  research_fields: z.string().optional(),
+  staff_id: z.string().optional(),
 });
 
 type ProfileFormData = z.infer<typeof profileSchema>;
@@ -48,6 +51,9 @@ export default function ProfilePage() {
         username: user.username,
         student_number: user.student_number,
         biography: user.biography,
+        way_of_communication: user.way_of_communication,
+        research_fields: user.research_fields,
+        staff_id: user.staff_id,
       });
     }
   }, [user, reset]);
@@ -58,7 +64,15 @@ export default function ProfilePage() {
 
   if (isLoading) {
     return (
-      <Container maxWidth="sm" sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+      <Container
+        maxWidth="sm"
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh",
+        }}
+      >
         <CircularProgress />
       </Container>
     );
@@ -78,7 +92,11 @@ export default function ProfilePage() {
           background: (theme) => theme.palette.background.paper,
         }}
       >
-        <Typography component="h1" variant="h4" sx={{ mb: 3, fontWeight: "bold" }}>
+        <Typography
+          component="h1"
+          variant="h4"
+          sx={{ mb: 3, fontWeight: "bold" }}
+        >
           پروفایل کاربری
         </Typography>
 
@@ -129,30 +147,80 @@ export default function ProfilePage() {
               {...register("username")}
             />
 
-            <TextField
-              required
-              fullWidth
-              id="student_number"
-              label="شماره دانشجویی"
-              InputProps={{ sx: { borderRadius: 2 } }}
-              dir="rtl"
-              error={!!errors.student_number}
-              helperText={errors.student_number?.message}
-              {...register("student_number")}
-            />
+            {user?.role === "student" && (
+              <TextField
+                fullWidth
+                id="student_number"
+                label="شماره دانشجویی"
+                InputProps={{ sx: { borderRadius: 2 } }}
+                dir="rtl"
+                error={!!errors.student_number}
+                helperText={errors.student_number?.message}
+                {...register("student_number")}
+              />
+            )}
+            {user?.role === "student" && (
+              <TextField
+                fullWidth
+                id="biography"
+                label="بیوگرافی"
+                multiline
+                rows={4}
+                InputProps={{ sx: { borderRadius: 2 } }}
+                dir="rtl"
+                error={!!errors.biography}
+                helperText={errors.biography?.message}
+                {...register("biography")}
+              />
+            )}
 
-            <TextField
-              fullWidth
-              id="biography"
-              label="بیوگرافی"
-              multiline
-              rows={4}
-              InputProps={{ sx: { borderRadius: 2 } }}
-              dir="rtl"
-              error={!!errors.biography}
-              helperText={errors.biography?.message}
-              {...register("biography")}
-            />
+            {user?.role === "instructor" && (
+              <>
+                <TextField
+                  fullWidth
+                  id="staff_id"
+                  label="شماره پرسنلی"
+                  InputProps={{
+                    sx: { borderRadius: 2 },
+                    readOnly: true,
+                  }}
+                  dir="rtl"
+                  error={!!errors.staff_id}
+                  helperText={errors.staff_id?.message}
+                  {...register("staff_id")}
+                  sx={{
+                    backgroundColor: (theme) =>
+                      theme.palette.action.disabledBackground,
+                  }}
+                />
+                <TextField
+                  fullWidth
+                  id="way_of_communication"
+                  label="روش‌های ارتباطی"
+                  multiline
+                  rows={2}
+                  InputProps={{ sx: { borderRadius: 2 } }}
+                  dir="rtl"
+                  error={!!errors.way_of_communication}
+                  helperText={errors.way_of_communication?.message}
+                  {...register("way_of_communication")}
+                  placeholder="لطفا روش‌های ارتباطی خود را وارد کنید (مثال: ایمیل، تلگرام، واتس‌اپ)"
+                />
+                <TextField
+                  fullWidth
+                  id="research_fields"
+                  label="زمینه‌های تحقیقاتی"
+                  multiline
+                  rows={3}
+                  InputProps={{ sx: { borderRadius: 2 } }}
+                  dir="rtl"
+                  error={!!errors.research_fields}
+                  helperText={errors.research_fields?.message}
+                  {...register("research_fields")}
+                  placeholder="لطفا زمینه‌های تحقیقاتی خود را وارد کنید (با کاما جدا کنید)"
+                />
+              </>
+            )}
           </Stack>
 
           <Button

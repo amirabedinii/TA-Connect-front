@@ -11,6 +11,7 @@ import {
   Stack,
 } from "@mui/material";
 import { Request, RequestStatus } from "../types/course.types";
+import { useRouter } from "next/navigation";
 
 interface RequestsTableProps {
   requests: Request[];
@@ -55,6 +56,8 @@ export default function RequestsTable({
   pageSize,
   onPageSizeChange,
 }: RequestsTableProps) {
+  const router = useRouter();
+
   const handleChangePage = (event: unknown, newPage: number) => {
     onPageChange(newPage + 1);
   };
@@ -63,6 +66,10 @@ export default function RequestsTable({
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
     onPageSizeChange(parseInt(event.target.value, 10));
+  };
+
+  const handleRowClick = (courseId: number) => {
+    router.push(`/student/courses/${courseId}`);
   };
 
   return (
@@ -80,7 +87,16 @@ export default function RequestsTable({
           </TableHead>
           <TableBody>
             {requests.map((request) => (
-              <TableRow key={request.id}>
+              <TableRow 
+                key={request.id}
+                onClick={() => handleRowClick(request.course.id)}
+                sx={{
+                  cursor: 'pointer',
+                  '&:hover': {
+                    backgroundColor: 'action.hover',
+                  },
+                }}
+              >
                 <TableCell>{request.course.name}</TableCell>
                 <TableCell>
                   {request.course.instructor.first_name}{" "}

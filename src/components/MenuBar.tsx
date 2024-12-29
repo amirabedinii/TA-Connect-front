@@ -44,7 +44,7 @@ export default function MenuBar() {
         { name: "درخواست‌های من", path: "/student/requests", icon: <ListAltIcon /> },
         { name: "دروس قابل درخواست", path: "/student/available-courses", icon: <SchoolIcon /> },
       ],
-      teacher: [
+      instructor: [
         { name: "دروس من", path: "/instructor/my-courses", icon: <SchoolIcon /> },
       ],
     };

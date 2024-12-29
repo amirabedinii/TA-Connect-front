@@ -7,6 +7,7 @@ import {
   CoursesResponse,
   Instructor,
   UserCreateRequest,
+  Student,
 } from "../types/course.types";
 
 export const useCourse = () => {
@@ -31,9 +32,9 @@ export const useCourse = () => {
           queryClient.invalidateQueries({ queryKey: ["available-courses"] });
           showToast.success("درخواست شما با موفقیت ثبت شد");
         },
-        onError: (error) => {
-          showToast.error(error.message || "خطا در ثبت درخواست");
-        },
+        // onError: (error) => {
+        //   showToast.error(error.message || "خطا در ثبت درخواست");
+        // },
       }
     );
 
@@ -75,6 +76,48 @@ export const useCourse = () => {
         ),
     });
 
+  const useGetInstructorMyCourses = (page: number = 1, pageSize: number = 10) =>
+    useQuery<CoursesResponse>({
+      queryKey: ["instructor-my-courses", page, pageSize],
+      queryFn: () =>
+        clientFetch.get(`/course/courses/?page=${page}&page_size=${pageSize}`),
+    });
+
+  const useGetCourseRequests = (courseId: string) =>
+    useQuery<RequestsResponse>({
+      queryKey: ["course-requests", courseId],
+      queryFn: () => clientFetch.get(`/request/requests/?course=${courseId}`),
+      enabled: !!courseId,
+    });
+
+  const useUpdateRequestStatus = () =>
+    useMutation<void, Error, { requestId: number; status: 'accepted' | 'declined' }>({
+      mutationFn: ({ requestId, status }) =>
+        clientFetch.put(`/request/requests/${requestId}/`, { status }),
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ["course-requests"] });
+        showToast.success("وضعیت درخواست با موفقیت بروزرسانی شد");
+      },
+      // onError: (error) => {
+      //   showToast.error(error.message || "خطا در بروزرسانی وضعیت درخواست");
+      // },
+    });
+
+  const useUpdateCourseHeadTA = () =>
+    useMutation<void, Error, { courseId: string; student: Student | null }>({
+      mutationFn: ({ courseId, student }) =>
+        clientFetch.patch(`/course/courses/${courseId}/`, {
+          head_ta: student?.id || null
+        }),
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ["course"] });
+        showToast.success("سر دستیار با موفقیت تغییر کرد");
+      },
+      // onError: (error) => {
+      //   showToast.error(error.message || "خطا در تغییر سر دستیار");
+      // },
+    });
+
   return {
     useGetAvailableCourses,
     useRequestCourse,
@@ -83,5 +126,9 @@ export const useCourse = () => {
     useGetInstructorDetails,
     useGetInstructorCourses,
     useGetRequests,
+    useGetInstructorMyCourses,
+    useGetCourseRequests,
+    useUpdateRequestStatus,
+    useUpdateCourseHeadTA,
   };
 };

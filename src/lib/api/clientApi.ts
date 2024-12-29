@@ -36,4 +36,10 @@ export const clientFetch = {
     const response = await api.delete<T>(endpoint);
     return response.data;
   },
+
+  patch: async <T, D = unknown>(endpoint: string, data?: D): Promise<T> => {
+    const api = getClientSideAPI();
+    const response = await api.patch<T>(endpoint, data);
+    return response.data;
+  },
 }; 

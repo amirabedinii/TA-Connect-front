@@ -17,9 +17,9 @@ export const useUser = () => {
       queryClient.invalidateQueries({ queryKey: ['profile'] });
       showToast.success('پروفایل با موفقیت بروزرسانی شد');
     },
-    onError: (error) => {
-      showToast.error(error.message || 'خطا در بروزرسانی پروفایل');
-    },
+    // onError: (error) => {
+    //   showToast.error(error.message || 'خطا در بروزرسانی پروفایل');
+    // },
   });
 
   return {
