@@ -32,9 +32,9 @@ export const useCourse = () => {
           queryClient.invalidateQueries({ queryKey: ["available-courses"] });
           showToast.success("درخواست شما با موفقیت ثبت شد");
         },
-        onError: (error) => {
-          showToast.error(error.message || "خطا در ثبت درخواست");
-        },
+        // onError: (error) => {
+        //   showToast.error(error.message || "خطا در ثبت درخواست");
+        // },
       }
     );
 
@@ -98,9 +98,9 @@ export const useCourse = () => {
         queryClient.invalidateQueries({ queryKey: ["course-requests"] });
         showToast.success("وضعیت درخواست با موفقیت بروزرسانی شد");
       },
-      onError: (error) => {
-        showToast.error(error.message || "خطا در بروزرسانی وضعیت درخواست");
-      },
+      // onError: (error) => {
+      //   showToast.error(error.message || "خطا در بروزرسانی وضعیت درخواست");
+      // },
     });
 
   const useUpdateCourseHeadTA = () =>
@@ -113,9 +113,9 @@ export const useCourse = () => {
         queryClient.invalidateQueries({ queryKey: ["course"] });
         showToast.success("سر دستیار با موفقیت تغییر کرد");
       },
-      onError: (error) => {
-        showToast.error(error.message || "خطا در تغییر سر دستیار");
-      },
+      // onError: (error) => {
+      //   showToast.error(error.message || "خطا در تغییر سر دستیار");
+      // },
     });
 
   return {

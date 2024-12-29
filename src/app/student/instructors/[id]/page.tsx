@@ -79,15 +79,16 @@ export default function InstructorDetailsPage() {
                 <ListItemText
                   primary="روش‌های ارتباطی"
                   secondary={
-                    <Box
-                      sx={{ display: "flex", gap: 1, flexWrap: "wrap", mt: 1 }}
-                    >
-                      <Chip
-                        key={instructor?.way_of_communication}
-                        label={instructor?.way_of_communication}
-                        size="small"
-                      />
-                    </Box>
+                    <Typography component="div" variant="body2">
+                      <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap", mt: 1 }}>
+                        <Chip
+                          key={instructor?.way_of_communication}
+                          label={instructor?.way_of_communication}
+                          size="small"
+                          color="primary"
+                        />
+                      </Box>
+                    </Typography>
                   }
                 />
               </ListItem>
@@ -108,16 +109,12 @@ export default function InstructorDetailsPage() {
                           mt: 1,
                         }}
                       >
-                        {instructor?.research_fields
-                          ?.split(" ")
-                          .map((field) => (
-                            <Chip
-                              key={field}
-                              label={field}
-                              size="small"
-                              color="primary"
-                            />
-                          ))}
+                        <Chip
+                          key={instructor?.research_fields}
+                          label={instructor?.research_fields}
+                          size="small"
+                          color="primary"
+                        />
                       </Box>
                     </Typography>
                   }
