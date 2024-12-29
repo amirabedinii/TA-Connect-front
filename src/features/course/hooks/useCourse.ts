@@ -75,6 +75,33 @@ export const useCourse = () => {
         ),
     });
 
+  const useGetInstructorMyCourses = (page: number = 1, pageSize: number = 10) =>
+    useQuery<CoursesResponse>({
+      queryKey: ["instructor-my-courses", page, pageSize],
+      queryFn: () =>
+        clientFetch.get(`/course/courses/?page=${page}&page_size=${pageSize}`),
+    });
+
+  const useGetCourseRequests = (courseId: string) =>
+    useQuery<RequestsResponse>({
+      queryKey: ["course-requests", courseId],
+      queryFn: () => clientFetch.get(`/request/requests/?course=${courseId}`),
+      enabled: !!courseId,
+    });
+
+  const useUpdateRequestStatus = () =>
+    useMutation<void, Error, { requestId: number; status: 'accepted' | 'declined' }>({
+      mutationFn: ({ requestId, status }) =>
+        clientFetch.put(`/request/requests/${requestId}/`, { status }),
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ["course-requests"] });
+        showToast.success("وضعیت درخواست با موفقیت بروزرسانی شد");
+      },
+      onError: (error) => {
+        showToast.error(error.message || "خطا در بروزرسانی وضعیت درخواست");
+      },
+    });
+
   return {
     useGetAvailableCourses,
     useRequestCourse,
@@ -83,5 +110,8 @@ export const useCourse = () => {
     useGetInstructorDetails,
     useGetInstructorCourses,
     useGetRequests,
+    useGetInstructorMyCourses,
+    useGetCourseRequests,
+    useUpdateRequestStatus,
   };
 };
