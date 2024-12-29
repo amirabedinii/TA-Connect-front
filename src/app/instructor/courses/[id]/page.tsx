@@ -31,7 +31,7 @@ export default function InstructorCourseDetailsPage() {
   const { data: course, isLoading } = useGetCourseDetails(courseId);
   const { data: requests, isLoading: isLoadingRequests } = useGetCourseRequests(courseId);
   const { mutate: updateStatus, isPending: isUpdating } = useUpdateRequestStatus();
-  const { mutate: updateHeadTA, isPending: isUpdatingHeadTA } = useUpdateCourseHeadTA();
+  const { mutate: updateHeadTA } = useUpdateCourseHeadTA();
 
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
     setActiveTab(newValue);
