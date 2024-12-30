@@ -1,3 +1,15 @@
+/*
+Strengths:
+- Good basic API client setup
+- Clean interceptor implementation
+- Error handling present
+
+Areas for Improvement:
+- Token refresh logic needs completion
+- Consider adding request timeout
+*/
+
+
 import axios from "axios";
 import { showToast } from "../utils/utils";
 

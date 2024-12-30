@@ -1,3 +1,15 @@
+/*
+
+Strengths:
+- Well-organized custom hooks
+- Good use of React Query
+- Clean mutation implementations
+- Effective cache invalidation
+
+Areas for Improvement:
+- Consider implementing retry logic
+*/
+
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { clientFetch } from "@/lib/api/clientApi";
 import { showToast } from "@/lib/utils/utils";
