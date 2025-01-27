@@ -2,6 +2,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { clientFetch } from '@/lib/api/clientApi';
 import { showToast } from '@/lib/utils/utils';
 import { User, UserError } from '../types/user.types';
+import { Student } from '@/features/course/types/course.types';
 
 export const useUser = () => {
   const queryClient = useQueryClient();
@@ -22,8 +23,21 @@ export const useUser = () => {
     // },
   });
 
+  const useGetStudentDetails = (studentId: string) =>
+    useQuery<Student, Error, Student>({
+      queryKey: ["student", studentId],
+      queryFn: async () => {
+        const response = await clientFetch.get<Student>(`/user/profile/student/${studentId}/`);
+        return response;
+      },
+      enabled: !!studentId,
+      retry: 1,
+      staleTime: 5 * 60 * 1000,
+    });
+
   return {
     useGetUserInfo,
     useUpdateUserInfo,
+    useGetStudentDetails,
   };
 }; 

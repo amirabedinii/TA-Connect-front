@@ -20,6 +20,7 @@ import {
   Instructor,
   UserCreateRequest,
   Student,
+  RequestStatus,
 } from "../types/course.types";
 
 export const useCourse = () => {
@@ -116,18 +117,45 @@ export const useCourse = () => {
     });
 
   const useUpdateCourseHeadTA = () =>
-    useMutation<void, Error, { courseId: string; student: Student | null }>({
+    useMutation<
+      Course,
+      Error,
+      { courseId: string; student: Student | null },
+      { previousCourse: Course | undefined }
+    >({
       mutationFn: ({ courseId, student }) =>
         clientFetch.patch(`/course/courses/${courseId}/`, {
-          head_ta: student?.id || null
+          head_ta_id: student?.id || null
         }),
-      onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: ["course"] });
+      onMutate: async ({ courseId, student }) => {
+        await queryClient.cancelQueries({ queryKey: ['course', courseId] });
+        
+        const previousCourse = queryClient.getQueryData<Course>(['course', courseId]);
+        
+        queryClient.setQueryData(['course', courseId], (old: Course | undefined) => ({
+          ...old,
+          headTA: student ? {
+            id: student.id,
+            student: student,
+            course: old!,
+            status: RequestStatus.ACCEPTED,
+            score: 0,
+            date: new Date().toISOString()
+          } : null
+        }));
+        
+        return { previousCourse };
+      },
+      onError: (err, variables, context) => {
+        if (context?.previousCourse) {
+          queryClient.setQueryData(['course', variables.courseId], context.previousCourse);
+        }
+        showToast.error("خطا در تغییر سر دستیار");
+      },
+      onSuccess: (data, variables) => {
+        queryClient.setQueryData(['course', variables.courseId], data);
         showToast.success("سر دستیار با موفقیت تغییر کرد");
       },
-      // onError: (error) => {
-      //   showToast.error(error.message || "خطا در تغییر سر دستیار");
-      // },
     });
 
   return {

@@ -56,6 +56,11 @@ export default function CourseTable({
     router.push(`courses/${courseId}`);
   };
 
+  const handleInstructorClick = (e: React.MouseEvent, instructorId: number) => {
+    e.stopPropagation(); // Prevent course row click
+    router.push(`/student/instructors/${instructorId}`);
+  };
+
   if (isMobile) {
     return (
       <Stack spacing={2}>
@@ -139,7 +144,16 @@ export default function CourseTable({
                 }}
               >
                 <TableCell>{course.name}</TableCell>
-                <TableCell>
+                <TableCell 
+                  onClick={(e) => handleInstructorClick(e, course.instructor.id)}
+                  sx={{ 
+                    cursor: 'pointer',
+                    '&:hover': {
+                      textDecoration: 'underline',
+                      color: 'primary.main'
+                    }
+                  }}
+                >
                   {course.instructor.first_name} {course.instructor.last_name}
                 </TableCell>
                 <TableCell>{course.semester}</TableCell>
