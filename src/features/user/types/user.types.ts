@@ -8,9 +8,11 @@ export interface User {
   way_of_communication?: string;
   research_fields?: string;
   staff_id?: string;
+  resume_file?: string | File;
 }
 
 export interface UserError {
   message: string;
   status: number;
+  detail?: string;
 }

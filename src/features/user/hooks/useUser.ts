@@ -12,15 +12,16 @@ export const useUser = () => {
     queryFn: () => clientFetch.get('/auth/users/me/'),
   });
 
-  const useUpdateUserInfo = useMutation<User, UserError, Partial<User>>({
+  const useUpdateUserInfo = useMutation<User, UserError, FormData>({
     mutationFn: (userData) => clientFetch.put('/auth/users/me/', userData),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['profile'] });
       showToast.success('پروفایل با موفقیت بروزرسانی شد');
     },
-    // onError: (error) => {
-    //   showToast.error(error.message || 'خطا در بروزرسانی پروفایل');
-    // },
+    onError: (error) => {
+      console.error('Profile update error:', error);
+      showToast.error(error.message || 'خطا در بروزرسانی پروفایل');
+    },
   });
 
   const useGetStudentDetails = (studentId: string) =>

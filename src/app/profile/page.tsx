@@ -9,12 +9,28 @@ import {
   Typography,
   Stack,
   CircularProgress,
+  IconButton,
 } from "@mui/material";
 import { useUser } from "@/features/user/hooks/useUser";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { CloudUpload, Delete } from "@mui/icons-material";
+import { styled } from "@mui/material/styles";
+import { showToast } from "@/lib/utils/utils";
+
+const VisuallyHiddenInput = styled("input")({
+  clip: "rect(0 0 0 0)",
+  clipPath: "inset(50%)",
+  height: 1,
+  overflow: "hidden",
+  position: "absolute",
+  bottom: 0,
+  left: 0,
+  whiteSpace: "nowrap",
+  width: 1,
+});
 
 const profileSchema = z.object({
   first_name: z.string().min(2, "نام باید حداقل ۲ کاراکتر باشد"),
@@ -25,6 +41,16 @@ const profileSchema = z.object({
   way_of_communication: z.string().optional(),
   research_fields: z.string().optional(),
   staff_id: z.string().optional(),
+  resume_file: z.any().optional(),
+}).refine((data) => {
+  if (data.resume_file && data.resume_file.length > 0) {
+    const file = data.resume_file[0];
+    return file.type === "application/pdf" && file.size <= 1024 * 1024;
+  }
+  return true;
+}, {
+  message: "فایل باید PDF و حداکثر 1 مگابایت باشد",
+  path: ["resume_file"],
 });
 
 type ProfileFormData = z.infer<typeof profileSchema>;
@@ -39,9 +65,41 @@ export default function ProfilePage() {
     handleSubmit,
     formState: { errors },
     reset,
+    setValue,
   } = useForm<ProfileFormData>({
     resolver: zodResolver(profileSchema),
   });
+
+  const [resumeFileName, setResumeFileName] = useState<string>("");
+
+  const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      if (file.type !== "application/pdf") {
+        showToast.error("فقط فایل PDF مجاز است");
+        return;
+      }
+      if (file.size > 1024 * 1024) {
+        showToast.error("حجم فایل باید کمتر از 1 مگابایت باشد");
+        return;
+      }
+      setResumeFileName(file.name);
+      setValue("resume_file", file);
+    }
+  };
+
+  const handleRemoveResume = async () => {
+    try {
+      await fetch("/api/students/remove-resume", {
+        method: "POST",
+      });
+      setResumeFileName("");
+      setValue("resume_file", null);
+      showToast.success("رزومه با موفقیت حذف شد");
+    } catch (error) {
+      showToast.error("خطا در حذف رزومه");
+    }
+  };
 
   useEffect(() => {
     if (user) {
@@ -58,8 +116,50 @@ export default function ProfilePage() {
     }
   }, [user, reset]);
 
-  const onSubmit = (data: ProfileFormData) => {
-    updateProfile(data);
+  const validateFormData = (formData: FormData): boolean => {
+    const resumeFile = formData.get('resume_file');
+    if (resumeFile instanceof File) {
+      if (resumeFile.size > 1024 * 1024) {
+        showToast.error('حجم فایل باید کمتر از 1 مگابایت باشد');
+        return false;
+      }
+      if (resumeFile.type !== 'application/pdf') {
+        showToast.error('فقط فایل PDF مجاز است');
+        return false;
+      }
+    }
+    return true;
+  };
+
+  const onSubmit = async (data: ProfileFormData) => {
+    try {
+      const formData = new FormData();
+      
+      // Handle basic fields
+      (Object.keys(data) as Array<keyof ProfileFormData>).forEach((key) => {
+        if (key === "resume_file") {
+          if (data[key] instanceof File) {
+            formData.append("resume_file", data[key] as File);
+          }
+        } else if (data[key]) {
+          formData.append(key, String(data[key]));
+        }
+      });
+
+      // Log the FormData contents for debugging
+      for (const pair of formData.entries()) {
+        console.log(`${pair[0]}: ${pair[1]}`);
+      }
+
+      if (!validateFormData(formData)) {
+        return;
+      }
+
+      updateProfile(formData);
+    } catch (error) {
+      console.error('Form submission error:', error);
+      showToast.error('خطا در ارسال فرم');
+    }
   };
 
   if (isLoading) {
@@ -220,6 +320,44 @@ export default function ProfilePage() {
                   placeholder="لطفا زمینه‌های تحقیقاتی خود را وارد کنید (با کاما جدا کنید)"
                 />
               </>
+            )}
+
+            {user?.role === "student" && (
+              <Box sx={{ mt: 2 }}>
+                <Typography variant="subtitle1" gutterBottom>
+                  رزومه
+                </Typography>
+                <Stack direction="row" spacing={2} alignItems="center">
+                  <Button
+                    component="label"
+                    variant="contained"
+                    startIcon={<CloudUpload />}
+                    sx={{ borderRadius: 2 }}
+                  >
+                    آپلود رزومه
+                    <VisuallyHiddenInput
+                      type="file"
+                      accept=".pdf"
+                      onChange={handleFileChange}
+                    />
+                  </Button>
+                  {resumeFileName && (
+                    <>
+                      <Typography variant="body2" sx={{ flex: 1 }}>
+                        {resumeFileName}
+                      </Typography>
+                      <IconButton onClick={handleRemoveResume} color="error">
+                        <Delete />
+                      </IconButton>
+                    </>
+                  )}
+                </Stack>
+                {errors.resume_file && (
+                  <Typography color="error" variant="caption">
+                    {errors.resume_file?.message?.toString()}
+                  </Typography>
+                )}
+              </Box>
             )}
           </Stack>
 
