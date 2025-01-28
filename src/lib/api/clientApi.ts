@@ -26,29 +26,9 @@ export const clientFetch = {
   },
   
   put: async <T>(url: string, data: FormData | object): Promise<T> => {
-    const headers: HeadersInit = {};
-    
-    // Don't set Content-Type for FormData - browser will set it with boundary
-    if (!(data instanceof FormData)) {
-      headers['Content-Type'] = 'application/json';
-    }
-
-    const response = await fetch(`${API_BASE_URL}${url}`, {
-      method: 'PUT',
-      headers,
-      credentials: 'include',
-      body: data instanceof FormData ? data : JSON.stringify(data),
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
-      throw {
-        message: errorData.detail || 'An error occurred',
-        status: response.status,
-      };
-    }
-
-    return response.json();
+    const api = getClientSideAPI();
+    const response = await api.put<T>(url, data);
+    return response.data;
   },
   
   delete: async <T>(endpoint: string): Promise<T> => {

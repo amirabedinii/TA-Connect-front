@@ -28,7 +28,7 @@ export const useUser = () => {
     useQuery<Student, Error, Student>({
       queryKey: ["student", studentId],
       queryFn: async () => {
-        const response = await clientFetch.get<Student>(`/user/profile/student/${studentId}/`);
+        const response = await clientFetch.get<Student>(`/faculty/students/${studentId}/`);
         return response;
       },
       enabled: !!studentId,
@@ -36,9 +36,15 @@ export const useUser = () => {
       staleTime: 5 * 60 * 1000,
     });
 
+  // Add a new function for resume download
+  const downloadStudentResume = async (studentId: string) => {
+    window.open(`${process.env.NEXT_PUBLIC_API_BASE_URL}/faculty/students/${studentId}/download-resume/`, '_blank');
+  };
+
   return {
     useGetUserInfo,
     useUpdateUserInfo,
     useGetStudentDetails,
+    downloadStudentResume, // Export the new function
   };
 }; 

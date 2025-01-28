@@ -106,14 +106,14 @@ export const useCourse = () => {
   const useUpdateRequestStatus = () =>
     useMutation<void, Error, { requestId: number; status: 'accepted' | 'declined' }>({
       mutationFn: ({ requestId, status }) =>
-        clientFetch.put(`/request/requests/${requestId}/`, { status }),
+        clientFetch.patch(`/request/requests/${requestId}/`, { status }),
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: ["course-requests"] });
         showToast.success("وضعیت درخواست با موفقیت بروزرسانی شد");
       },
-      // onError: (error) => {
-      //   showToast.error(error.message || "خطا در بروزرسانی وضعیت درخواست");
-      // },
+      onError: (error) => {
+        showToast.error(error.message || "خطا در بروزرسانی وضعیت درخواست");
+      },
     });
 
   const useUpdateCourseHeadTA = () =>

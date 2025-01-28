@@ -11,6 +11,7 @@ import {
   Chip,
 } from "@mui/material";
 import { Request, RequestStatus } from "../types/course.types";
+import { useRouter } from "next/navigation";
 
 interface CourseRequestsTableProps {
   requests: Request[];
@@ -23,6 +24,13 @@ export default function CourseRequestsTable({
   onStatusUpdate,
   isUpdating,
 }: CourseRequestsTableProps) {
+  const router = useRouter();
+
+  const handleStudentClick = (e: React.MouseEvent, studentId: number) => {
+    e.stopPropagation(); // Prevent row click event
+    router.push(`/instructor/students/${studentId}`);
+  };
+
   return (
     <TableContainer component={Paper}>
       <Table>
@@ -39,7 +47,16 @@ export default function CourseRequestsTable({
         <TableBody>
           {requests.map((request) => (
             <TableRow key={request.id}>
-              <TableCell>
+              <TableCell 
+                onClick={(e) => handleStudentClick(e, request.student.id)}
+                sx={{ 
+                  cursor: 'pointer',
+                  '&:hover': {
+                    textDecoration: 'underline',
+                    color: 'primary.main'
+                  }
+                }}
+              >
                 {request.student.first_name} {request.student.last_name}
               </TableCell>
               <TableCell>{request.student.student_number}</TableCell>
