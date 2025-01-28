@@ -13,14 +13,41 @@ export const useUser = () => {
   });
 
   const useUpdateUserInfo = useMutation<User, UserError, FormData>({
-    mutationFn: (userData) => clientFetch.put('/auth/users/me/', userData),
-    onSuccess: () => {
+    mutationFn: async (userData) => {
+      try {
+        // Log what we're sending to the server
+        console.log('Sending to server:');
+        for (const pair of userData.entries()) {
+          console.log(`${pair[0]}: ${pair[1]}`);
+        }
+
+        const response = await clientFetch.put<User>('/auth/users/me/', userData);
+        return response;
+      } catch (error: any) {
+        console.error('Update profile error:', {
+          error,
+          response: error.response,
+          data: error.response?.data
+        });
+
+        // Throw a structured error
+        throw {
+          message: error.response?.data?.detail || 
+                  error.response?.data?.message || 
+                  error.message || 
+                  'خطا در بروزرسانی پروفایل',
+          status: error.response?.status || 500,
+          response: error.response
+        };
+      }
+    },
+    onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['profile'] });
       showToast.success('پروفایل با موفقیت بروزرسانی شد');
     },
-    onError: (error) => {
-      console.error('Profile update error:', error);
-      showToast.error(error.message || 'خطا در بروزرسانی پروفایل');
+    onError: (error: UserError) => {
+      console.error('Profile update failed:', error);
+      showToast.error(error.message);
     },
   });
 
@@ -38,7 +65,7 @@ export const useUser = () => {
 
   // Add a new function for resume download
   const downloadStudentResume = async (studentId: string) => {
-    window.open(`${process.env.NEXT_PUBLIC_API_BASE_URL}/faculty/students/${studentId}/download-resume/`, '_blank');
+    window.open(`${process.env.NEXT_PUBLIC_API_BASE_URL}/faculty/students/${studentId}/download_file/`, '_blank');
   };
 
   return {

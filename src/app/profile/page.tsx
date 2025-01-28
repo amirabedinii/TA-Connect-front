@@ -16,9 +16,11 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useEffect, useState } from "react";
-import { CloudUpload, Delete } from "@mui/icons-material";
+import { CloudUpload, Delete, CloudDownload } from "@mui/icons-material";
 import { styled } from "@mui/material/styles";
 import { showToast } from "@/lib/utils/utils";
+import { useQueryClient } from '@tanstack/react-query';
+import { clientFetch } from '@/lib/api/clientApi';
 
 const VisuallyHiddenInput = styled("input")({
   clip: "rect(0 0 0 0)",
@@ -59,6 +61,7 @@ export default function ProfilePage() {
   const { useGetUserInfo, useUpdateUserInfo } = useUser();
   const { data: user, isLoading } = useGetUserInfo();
   const { mutate: updateProfile, isPending: isUpdating } = useUpdateUserInfo;
+  const queryClient = useQueryClient();
 
   const {
     register,
@@ -66,11 +69,35 @@ export default function ProfilePage() {
     formState: { errors },
     reset,
     setValue,
+    getValues,
   } = useForm<ProfileFormData>({
     resolver: zodResolver(profileSchema),
   });
 
   const [resumeFileName, setResumeFileName] = useState<string>("");
+
+  useEffect(() => {
+    if (user) {
+      reset({
+        first_name: user.first_name,
+        last_name: user.last_name,
+        username: user.username,
+        student_number: user.student_number,
+        biography: user.biography,
+        way_of_communication: user.way_of_communication,
+        research_fields: user.research_fields,
+        staff_id: user.staff_id,
+      });
+    }
+  }, [user, reset]);
+
+  useEffect(() => {
+    if (user?.resume_file) {
+      setResumeFileName("resume.pdf");
+    } else {
+      setResumeFileName("");
+    }
+  }, [user]);
 
   const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -88,33 +115,24 @@ export default function ProfilePage() {
     }
   };
 
-  const handleRemoveResume = async () => {
-    try {
-      await fetch("/api/students/remove-resume", {
-        method: "POST",
-      });
-      setResumeFileName("");
-      setValue("resume_file", null);
-      showToast.success("رزومه با موفقیت حذف شد");
-    } catch (error) {
-      showToast.error("خطا در حذف رزومه");
+  const handleDownloadResume = () => {
+    if (user?.resume_file) {
+      window.open(`${process.env.NEXT_PUBLIC_API_BASE_URL}${user.resume_file}`, '_blank');
     }
   };
 
-  useEffect(() => {
-    if (user) {
-      reset({
-        first_name: user.first_name,
-        last_name: user.last_name,
-        username: user.username,
-        student_number: user.student_number,
-        biography: user.biography,
-        way_of_communication: user.way_of_communication,
-        research_fields: user.research_fields,
-        staff_id: user.staff_id,
-      });
+  const handleRemoveResume = async () => {
+    try {
+      await clientFetch.delete('/auth/users/me/remove-resume/');
+      setResumeFileName("");
+      setValue("resume_file", null);
+      queryClient.invalidateQueries({ queryKey: ['profile'] });
+      showToast.success("رزومه با موفقیت حذف شد");
+    } catch (error) {
+      console.error('Resume deletion error:', error);
+      showToast.error("خطا در حذف رزومه");
     }
-  }, [user, reset]);
+  };
 
   const validateFormData = (formData: FormData): boolean => {
     const resumeFile = formData.get('resume_file');
@@ -135,24 +153,16 @@ export default function ProfilePage() {
     try {
       const formData = new FormData();
       
-      // Handle basic fields
       (Object.keys(data) as Array<keyof ProfileFormData>).forEach((key) => {
-        if (key === "resume_file") {
-          if (data[key] instanceof File) {
-            formData.append("resume_file", data[key] as File);
-          }
-        } else if (data[key]) {
+        if (key !== "resume_file" && data[key] !== null && data[key] !== undefined) {
           formData.append(key, String(data[key]));
         }
       });
 
-      // Log the FormData contents for debugging
-      for (const pair of formData.entries()) {
-        console.log(`${pair[0]}: ${pair[1]}`);
-      }
-
-      if (!validateFormData(formData)) {
-        return;
+      if (data.resume_file instanceof File) {
+        formData.append("resume_file", data.resume_file);
+      } else if (data.resume_file === null) {
+        formData.append("resume_file", "null");
       }
 
       updateProfile(formData);
@@ -328,25 +338,52 @@ export default function ProfilePage() {
                   رزومه
                 </Typography>
                 <Stack direction="row" spacing={2} alignItems="center">
-                  <Button
-                    component="label"
-                    variant="contained"
-                    startIcon={<CloudUpload />}
-                    sx={{ borderRadius: 2 }}
-                  >
-                    آپلود رزومه
-                    <VisuallyHiddenInput
-                      type="file"
-                      accept=".pdf"
-                      onChange={handleFileChange}
-                    />
-                  </Button>
-                  {resumeFileName && (
+                  {user.resume_file ? (
+                    <>
+                      <Button
+                        variant="contained"
+                        onClick={handleDownloadResume}
+                        startIcon={<CloudDownload />}
+                        sx={{ borderRadius: 2 }}
+                      >
+                        دانلود رزومه
+                      </Button>
+                      <IconButton 
+                        onClick={handleRemoveResume} 
+                        color="error"
+                        disabled={isUpdating}
+                      >
+                        <Delete />
+                      </IconButton>
+                    </>
+                  ) : (
+                    <Button
+                      component="label"
+                      variant="contained"
+                      startIcon={<CloudUpload />}
+                      sx={{ borderRadius: 2 }}
+                      disabled={isUpdating}
+                    >
+                      آپلود رزومه
+                      <VisuallyHiddenInput
+                        type="file"
+                        accept=".pdf"
+                        onChange={handleFileChange}
+                      />
+                    </Button>
+                  )}
+                  {resumeFileName && !user.resume_file && (
                     <>
                       <Typography variant="body2" sx={{ flex: 1 }}>
                         {resumeFileName}
                       </Typography>
-                      <IconButton onClick={handleRemoveResume} color="error">
+                      <IconButton 
+                        onClick={() => {
+                          setResumeFileName("");
+                          setValue("resume_file", null);
+                        }} 
+                        color="error"
+                      >
                         <Delete />
                       </IconButton>
                     </>

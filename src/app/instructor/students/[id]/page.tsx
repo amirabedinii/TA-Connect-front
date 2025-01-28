@@ -9,19 +9,27 @@ import {
   CircularProgress,
   List,
   ListItem,
-  ListItemText,
   ListItemIcon,
+  ListItemText,
   Divider,
+  Button,
 } from "@mui/material";
-import { useParams } from "next/navigation";
+import { School, Description, CloudDownload, History } from "@mui/icons-material";
 import { useUser } from "@/features/user/hooks/useUser";
-import { Person, School, Description } from "@mui/icons-material";
+import { useParams, useRouter } from "next/navigation";
+import { Student } from "@/features/course/types/course.types";
 
 export default function StudentProfilePage() {
   const params = useParams();
   const studentId = params.id as string;
   const { useGetStudentDetails } = useUser();
-  const { data: student, isLoading, error } = useGetStudentDetails(studentId);
+  const { data: student, isLoading } = useGetStudentDetails(studentId);
+
+  const handleDownloadResume = () => {
+    if (student?.resume_file) {
+      window.open(`${process.env.NEXT_PUBLIC_API_BASE_URL}/faculty/students/${studentId}/download_file/`, '_blank');
+    }
+  };
 
   if (isLoading) {
     return (
@@ -31,15 +39,7 @@ export default function StudentProfilePage() {
     );
   }
 
-  if (error || !student) {
-    return (
-      <Container sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
-        <Typography color="error">
-          خطا در بارگذاری اطلاعات دانشجو
-        </Typography>
-      </Container>
-    );
-  }
+  if (!student) return null;
 
   return (
     <Container component="main" maxWidth="lg">
@@ -70,6 +70,7 @@ export default function StudentProfilePage() {
                 />
               </ListItem>
               <Divider />
+              
               {student.biography && (
                 <>
                   <ListItem>
@@ -84,6 +85,27 @@ export default function StudentProfilePage() {
                   <Divider />
                 </>
               )}
+
+              <ListItem>
+                <ListItemIcon>
+                  <CloudDownload />
+                </ListItemIcon>
+                <ListItemText 
+                  primary="رزومه"
+                  secondary={
+                    <Button
+                      variant="contained"
+                      onClick={handleDownloadResume}
+                      disabled={!student?.resume_file}
+                      startIcon={<CloudDownload />}
+                      sx={{ mt: 1 }}
+                    >
+                      دانلود رزومه
+                    </Button>
+                  }
+                />
+              </ListItem>
+              <Divider />
             </List>
           </Grid>
         </Grid>

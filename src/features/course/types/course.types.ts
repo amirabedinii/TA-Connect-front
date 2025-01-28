@@ -47,6 +47,7 @@ export interface User {
 export interface Student extends User {
   student_number: string;
   biography?: string;
+  resume_file?: string | null;
 }
 
 // Instructor Interface extending User
