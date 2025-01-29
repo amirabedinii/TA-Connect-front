@@ -15,6 +15,7 @@ import { useParams } from "next/navigation";
 import { useState } from "react";
 import TATable from "@/features/course/components/TATable";
 import CourseRequestsTable from "@/features/course/components/CourseRequestsTable";
+import { useQueryClient } from "@tanstack/react-query";
 
 
 export default function InstructorCourseDetailsPage() {
@@ -32,13 +33,22 @@ export default function InstructorCourseDetailsPage() {
   const { data: requests, isLoading: isLoadingRequests } = useGetCourseRequests(courseId);
   const { mutate: updateStatus, isPending: isUpdating } = useUpdateRequestStatus();
   const { mutate: updateHeadTA } = useUpdateCourseHeadTA();
+  const queryClient = useQueryClient();
 
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
     setActiveTab(newValue);
   };
 
   const handleStatusUpdate = (requestId: number, status: 'accepted' | 'declined') => {
-    updateStatus({ requestId, status });
+    updateStatus(
+      { requestId, status },
+      {
+        onSuccess: () => {
+          // Refetch course details to update the TAs list if needed
+          queryClient.invalidateQueries({ queryKey: ['course', courseId] });
+        }
+      }
+    );
   };
 
   const handleHeadTAChange = (studentId: number | null) => {

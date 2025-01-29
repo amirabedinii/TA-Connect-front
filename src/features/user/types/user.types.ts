@@ -1,4 +1,7 @@
+import { Request } from "@/features/course/types/course.types";
+
 export interface User {
+  id: number;
   username: string;
   first_name: string;
   last_name: string;
@@ -8,9 +11,17 @@ export interface User {
   way_of_communication?: string;
   research_fields?: string;
   staff_id?: string;
+  resume_file?: string | null;  // URL string from backend or null
+  accepted_requests?: Request[];
 }
 
 export interface UserError {
   message: string;
-  status: number;
+  status?: number;
+  response?: {
+    data?: {
+      detail?: string;
+    };
+    status?: number;
+  };
 }

@@ -9,12 +9,36 @@ import {
   Typography,
   Stack,
   CircularProgress,
+  IconButton,
+  TableContainer,
+  Table,
+  TableHead,
+  TableRow,
+  TableCell,
+  TableBody,
 } from "@mui/material";
 import { useUser } from "@/features/user/hooks/useUser";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { CloudUpload, Delete, CloudDownload } from "@mui/icons-material";
+import { styled } from "@mui/material/styles";
+import { showToast } from "@/lib/utils/utils";
+import { useQueryClient } from '@tanstack/react-query';
+import { clientFetch } from '@/lib/api/clientApi';
+
+const VisuallyHiddenInput = styled("input")({
+  clip: "rect(0 0 0 0)",
+  clipPath: "inset(50%)",
+  height: 1,
+  overflow: "hidden",
+  position: "absolute",
+  bottom: 0,
+  left: 0,
+  whiteSpace: "nowrap",
+  width: 1,
+});
 
 const profileSchema = z.object({
   first_name: z.string().min(2, "نام باید حداقل ۲ کاراکتر باشد"),
@@ -25,23 +49,38 @@ const profileSchema = z.object({
   way_of_communication: z.string().optional(),
   research_fields: z.string().optional(),
   staff_id: z.string().optional(),
+  resume_file: z.any().optional(),
+}).refine((data) => {
+  if (data.resume_file && data.resume_file.length > 0) {
+    const file = data.resume_file[0];
+    return file.type === "application/pdf" && file.size <= 1024 * 1024;
+  }
+  return true;
+}, {
+  message: "فایل باید PDF و حداکثر 1 مگابایت باشد",
+  path: ["resume_file"],
 });
 
 type ProfileFormData = z.infer<typeof profileSchema>;
 
 export default function ProfilePage() {
-  const { useGetUserInfo, useUpdateUserInfo } = useUser();
+  const { useGetUserInfo, useUpdateUserInfo, downloadStudentResume } = useUser();
   const { data: user, isLoading } = useGetUserInfo();
   const { mutate: updateProfile, isPending: isUpdating } = useUpdateUserInfo;
+  const queryClient = useQueryClient();
 
   const {
     register,
     handleSubmit,
     formState: { errors },
     reset,
+    setValue,
+    getValues,
   } = useForm<ProfileFormData>({
     resolver: zodResolver(profileSchema),
   });
+
+  const [resumeFileName, setResumeFileName] = useState<string>("");
 
   useEffect(() => {
     if (user) {
@@ -58,8 +97,89 @@ export default function ProfilePage() {
     }
   }, [user, reset]);
 
-  const onSubmit = (data: ProfileFormData) => {
-    updateProfile(data);
+  useEffect(() => {
+    if (user?.resume_file) {
+      setResumeFileName("resume.pdf");
+    } else {
+      setResumeFileName("");
+    }
+  }, [user]);
+
+  const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      if (file.type !== "application/pdf") {
+        showToast.error("فقط فایل PDF مجاز است");
+        return;
+      }
+      if (file.size > 1024 * 1024) {
+        showToast.error("حجم فایل باید کمتر از 1 مگابایت باشد");
+        return;
+      }
+      setResumeFileName(file.name);
+      setValue("resume_file", file);
+    }
+  };
+
+  const handleDownloadResume = async () => {
+    try {
+      if (user?.resume_file && user.id) {
+        await downloadStudentResume(user.id.toString());
+      }
+    } catch (error) {
+      console.error('Resume download error:', error);
+      showToast.error("خطا در دانلود رزومه");
+    }
+  };
+
+  const handleRemoveResume = async () => {
+    try {
+      await clientFetch.delete(`/faculty/students/${user?.id}/remove_resume/`);
+      
+      setResumeFileName("");
+      setValue("resume_file", null);
+      queryClient.invalidateQueries({ queryKey: ['profile'] });
+      showToast.success("رزومه با موفقیت حذف شد");
+    } catch (error) {
+      console.error('Resume deletion error:', error);
+      showToast.error("خطا در حذف رزومه");
+    }
+  };
+
+  const validateFormData = (formData: FormData): boolean => {
+    const resumeFile = formData.get('resume_file');
+    if (resumeFile instanceof File) {
+      if (resumeFile.size > 1024 * 1024) {
+        showToast.error('حجم فایل باید کمتر از 1 مگابایت باشد');
+        return false;
+      }
+      if (resumeFile.type !== 'application/pdf') {
+        showToast.error('فقط فایل PDF مجاز است');
+        return false;
+      }
+    }
+    return true;
+  };
+
+  const onSubmit = async (data: ProfileFormData) => {
+    try {
+      const formData = new FormData();
+      
+      (Object.keys(data) as Array<keyof ProfileFormData>).forEach((key) => {
+        if (key !== "resume_file" && data[key] !== null && data[key] !== undefined) {
+          formData.append(key, String(data[key]));
+        }
+      });
+
+      if (data.resume_file instanceof File) {
+        formData.append("resume_file", data.resume_file);
+      }
+
+      updateProfile(formData);
+    } catch (error) {
+      console.error('Form submission error:', error);
+      showToast.error('خطا در ارسال فرم');
+    }
   };
 
   if (isLoading) {
@@ -220,6 +340,101 @@ export default function ProfilePage() {
                   placeholder="لطفا زمینه‌های تحقیقاتی خود را وارد کنید (با کاما جدا کنید)"
                 />
               </>
+            )}
+
+            {user?.role === "student" && (
+              <Box sx={{ mt: 2 }}>
+                <Typography variant="subtitle1" gutterBottom>
+                  رزومه
+                </Typography>
+                <Stack direction="row" spacing={2} alignItems="center">
+                  {user.resume_file ? (
+                    <>
+                      <Button
+                        variant="contained"
+                        onClick={handleDownloadResume}
+                        startIcon={<CloudDownload />}
+                        sx={{ borderRadius: 2 }}
+                      >
+                        دانلود رزومه
+                      </Button>
+                      <IconButton 
+                        onClick={handleRemoveResume} 
+                        color="error"
+                        disabled={isUpdating}
+                      >
+                        <Delete />
+                      </IconButton>
+                    </>
+                  ) : (
+                    <Button
+                      component="label"
+                      variant="contained"
+                      startIcon={<CloudUpload />}
+                      sx={{ borderRadius: 2 }}
+                      disabled={isUpdating}
+                    >
+                      آپلود رزومه
+                      <VisuallyHiddenInput
+                        type="file"
+                        accept=".pdf"
+                        onChange={handleFileChange}
+                      />
+                    </Button>
+                  )}
+                  {resumeFileName && !user.resume_file && (
+                    <>
+                      <Typography variant="body2" sx={{ flex: 1 }}>
+                        {resumeFileName}
+                      </Typography>
+                      <IconButton 
+                        onClick={() => {
+                          setResumeFileName("");
+                          setValue("resume_file", null);
+                        }} 
+                        color="error"
+                      >
+                        <Delete />
+                      </IconButton>
+                    </>
+                  )}
+                </Stack>
+                {errors.resume_file && (
+                  <Typography color="error" variant="caption">
+                    {errors.resume_file?.message?.toString()}
+                  </Typography>
+                )}
+              </Box>
+            )}
+
+            {user?.role === "student" && user?.accepted_requests && user.accepted_requests.length > 0 && (
+              <Box sx={{ mt: 4 }}>
+                <Typography variant="h6" gutterBottom>
+                  دروس دستیار آموزشی
+                </Typography>
+                <TableContainer component={Paper} sx={{ mt: 2 }}>
+                  <Table>
+                    <TableHead>
+                      <TableRow>
+                        <TableCell>نام درس</TableCell>
+                        <TableCell>نیمسال</TableCell>
+                        <TableCell>استاد</TableCell>
+                      </TableRow>
+                    </TableHead>
+                    <TableBody>
+                      {user.accepted_requests.map((request) => (
+                        <TableRow key={request.id}>
+                          <TableCell>{request.course.name}</TableCell>
+                          <TableCell>{request.course.semester}</TableCell>
+                          <TableCell>
+                            {`${request.course.instructor.first_name} ${request.course.instructor.last_name}`}
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </TableContainer>
+              </Box>
             )}
           </Stack>
 

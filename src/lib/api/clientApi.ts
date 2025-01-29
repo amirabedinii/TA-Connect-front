@@ -25,10 +25,26 @@ export const clientFetch = {
     return response.data;
   },
   
-  put: async <T, D = unknown>(endpoint: string, data?: D): Promise<T> => {
+  put: async <T>(url: string, data: FormData | object): Promise<T> => {
     const api = getClientSideAPI();
-    const response = await api.put<T>(endpoint, data);
-    return response.data;
+    
+    try {
+      let response;
+      if (data instanceof FormData) {
+        response = await api.put<T>(url, data, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        });
+      } else {
+        response = await api.put<T>(url, data);
+      }
+      
+      return response.data;
+    } catch (error) {
+      console.error('API put request failed:', error);
+      throw error;
+    }
   },
   
   delete: async <T>(endpoint: string): Promise<T> => {
