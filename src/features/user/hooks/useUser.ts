@@ -63,9 +63,35 @@ export const useUser = () => {
       staleTime: 5 * 60 * 1000,
     });
 
-  // Add a new function for resume download
+  // Update the download function to include authentication
   const downloadStudentResume = async (studentId: string) => {
-    window.open(`${process.env.NEXT_PUBLIC_API_BASE_URL}/faculty/students/${studentId}/download_file/`, '_blank');
+    try {
+      // Get the access token from localStorage or wherever you store it
+      const token = localStorage.getItem('access_token');
+      
+      // Create a fetch request with the authorization header
+      const response = await clientFetch.get(`/faculty/students/${studentId}/download_file/`
+      );
+
+      // if (!response.ok) {
+      //   throw new Error('Failed to download file');
+      // }
+
+      // Create a blob from the response and download it
+      // const blob = await response.blob();
+      // const url = window.URL.createObjectURL(blob);
+      // const a = document.createElement('a');
+      // a.href = url;
+      // a.download = `resume_${studentId}.pdf`; // or get filename from response headers if available
+      // document.body.appendChild(a);
+      // a.click();
+      // window.URL.revokeObjectURL(url);
+      // document.body.removeChild(a);
+    } catch (error) {
+      console.error('Download error:', error);
+      showToast.error('خطا در دانلود فایل');
+      throw error;
+    }
   };
 
   return {

@@ -1,3 +1,5 @@
+import { Request } from "@/features/course/types/course.types";
+
 export interface User {
   id: number;
   username: string;
@@ -10,6 +12,7 @@ export interface User {
   research_fields?: string;
   staff_id?: string;
   resume_file?: string | null;  // URL string from backend or null
+  accepted_requests?: Request[];
 }
 
 export interface UserError {

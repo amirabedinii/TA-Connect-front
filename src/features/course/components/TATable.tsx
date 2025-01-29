@@ -12,7 +12,7 @@ import {
 } from "@mui/material";
 import { Student } from "../types/course.types";
 import React, { useState } from "react";
-import { MilitaryTech, MilitaryTechOutlined } from "@mui/icons-material";
+import { WorkspacePremium, WorkspacePremiumOutlined } from "@mui/icons-material";
 import { useRouter } from "next/navigation";
 
 
@@ -93,7 +93,7 @@ export default function TATable({
                       onClick={() => handleHeadTAChange(headTA?.id === ta.id ? null : ta.id)}
                       color={headTA?.id === ta.id ? "primary" : "default"}
                     >
-                      {headTA?.id === ta.id ? <MilitaryTech /> : <MilitaryTechOutlined />}  
+                      {headTA?.id === ta.id ? <WorkspacePremium /> : <WorkspacePremiumOutlined />}  
                     </IconButton>
                   </Tooltip>
                 </TableCell>

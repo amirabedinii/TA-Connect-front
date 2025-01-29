@@ -13,21 +13,33 @@ import {
   ListItemText,
   Divider,
   Button,
+  TableContainer,
+  Table,
+  TableHead,
+  TableRow,
+  TableCell,
+  TableBody,
 } from "@mui/material";
 import { School, Description, CloudDownload, History } from "@mui/icons-material";
 import { useUser } from "@/features/user/hooks/useUser";
 import { useParams, useRouter } from "next/navigation";
 import { Student } from "@/features/course/types/course.types";
+import { showToast } from "@/lib/utils/utils";
 
 export default function StudentProfilePage() {
   const params = useParams();
   const studentId = params.id as string;
-  const { useGetStudentDetails } = useUser();
+  const { useGetStudentDetails, downloadStudentResume } = useUser();
   const { data: student, isLoading } = useGetStudentDetails(studentId);
 
-  const handleDownloadResume = () => {
-    if (student?.resume_file) {
-      window.open(`${process.env.NEXT_PUBLIC_API_BASE_URL}/faculty/students/${studentId}/download_file/`, '_blank');
+  const handleDownloadResume = async () => {
+    try {
+      if (student?.resume_file && studentId) {
+        await downloadStudentResume(studentId);
+      }
+    } catch (error) {
+      console.error('Resume download error:', error);
+      showToast.error("خطا در دانلود رزومه");
     }
   };
 
@@ -106,6 +118,41 @@ export default function StudentProfilePage() {
                 />
               </ListItem>
               <Divider />
+
+              {student?.accepted_requests && student.accepted_requests.length > 0 && (
+                <ListItem>
+                  <ListItemIcon>
+                    <School />
+                  </ListItemIcon>
+                  <ListItemText 
+                    primary="دروس دستیار آموزشی"
+                    secondary={
+                      <TableContainer component={Paper} sx={{ mt: 2 }}>
+                        <Table size="small">
+                          <TableHead>
+                            <TableRow>
+                              <TableCell>نام درس</TableCell>
+                              <TableCell>نیمسال</TableCell>
+                              <TableCell>استاد</TableCell>
+                            </TableRow>
+                          </TableHead>
+                          <TableBody>
+                            {student.accepted_requests.map((request) => (
+                              <TableRow key={request.id}>
+                                <TableCell>{request.course.name}</TableCell>
+                                <TableCell>{request.course.semester}</TableCell>
+                                <TableCell>
+                                  {`${request.course.instructor.first_name} ${request.course.instructor.last_name}`}
+                                </TableCell>
+                              </TableRow>
+                            ))}
+                          </TableBody>
+                        </Table>
+                      </TableContainer>
+                    }
+                  />
+                </ListItem>
+              )}
             </List>
           </Grid>
         </Grid>

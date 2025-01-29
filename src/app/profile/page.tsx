@@ -10,6 +10,12 @@ import {
   Stack,
   CircularProgress,
   IconButton,
+  TableContainer,
+  Table,
+  TableHead,
+  TableRow,
+  TableCell,
+  TableBody,
 } from "@mui/material";
 import { useUser } from "@/features/user/hooks/useUser";
 import { useForm } from "react-hook-form";
@@ -58,7 +64,7 @@ const profileSchema = z.object({
 type ProfileFormData = z.infer<typeof profileSchema>;
 
 export default function ProfilePage() {
-  const { useGetUserInfo, useUpdateUserInfo } = useUser();
+  const { useGetUserInfo, useUpdateUserInfo, downloadStudentResume } = useUser();
   const { data: user, isLoading } = useGetUserInfo();
   const { mutate: updateProfile, isPending: isUpdating } = useUpdateUserInfo;
   const queryClient = useQueryClient();
@@ -115,15 +121,21 @@ export default function ProfilePage() {
     }
   };
 
-  const handleDownloadResume = () => {
-    if (user?.resume_file) {
-      window.open(`${process.env.NEXT_PUBLIC_API_BASE_URL}${user.resume_file}`, '_blank');
+  const handleDownloadResume = async () => {
+    try {
+      if (user?.resume_file && user.id) {
+        await downloadStudentResume(user.id.toString());
+      }
+    } catch (error) {
+      console.error('Resume download error:', error);
+      showToast.error("خطا در دانلود رزومه");
     }
   };
 
   const handleRemoveResume = async () => {
     try {
-      await clientFetch.delete('/auth/users/me/remove-resume/');
+      await clientFetch.delete(`/faculty/students/${user?.id}/remove_resume/`);
+      
       setResumeFileName("");
       setValue("resume_file", null);
       queryClient.invalidateQueries({ queryKey: ['profile'] });
@@ -161,8 +173,6 @@ export default function ProfilePage() {
 
       if (data.resume_file instanceof File) {
         formData.append("resume_file", data.resume_file);
-      } else if (data.resume_file === null) {
-        formData.append("resume_file", "null");
       }
 
       updateProfile(formData);
@@ -394,6 +404,36 @@ export default function ProfilePage() {
                     {errors.resume_file?.message?.toString()}
                   </Typography>
                 )}
+              </Box>
+            )}
+
+            {user?.role === "student" && user?.accepted_requests && user.accepted_requests.length > 0 && (
+              <Box sx={{ mt: 4 }}>
+                <Typography variant="h6" gutterBottom>
+                  دروس دستیار آموزشی
+                </Typography>
+                <TableContainer component={Paper} sx={{ mt: 2 }}>
+                  <Table>
+                    <TableHead>
+                      <TableRow>
+                        <TableCell>نام درس</TableCell>
+                        <TableCell>نیمسال</TableCell>
+                        <TableCell>استاد</TableCell>
+                      </TableRow>
+                    </TableHead>
+                    <TableBody>
+                      {user.accepted_requests.map((request) => (
+                        <TableRow key={request.id}>
+                          <TableCell>{request.course.name}</TableCell>
+                          <TableCell>{request.course.semester}</TableCell>
+                          <TableCell>
+                            {`${request.course.instructor.first_name} ${request.course.instructor.last_name}`}
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </TableContainer>
               </Box>
             )}
           </Stack>
