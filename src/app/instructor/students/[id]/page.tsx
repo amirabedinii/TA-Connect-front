@@ -39,7 +39,7 @@ export default function StudentProfilePage() {
       }
     } catch (error) {
       console.error('Resume download error:', error);
-      showToast.error("خطا در دانلود رزومه");
+      showToast.error("خطا در دانلود فایل");
     }
   };
 
